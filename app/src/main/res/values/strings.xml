@@ -76,4 +76,6 @@
         <br>You can remove a statistic item by touch it multiple times.
         </br>
     </string>
+    <string name="add_cyc">start new cycle</string>
+    <string name="add_cycle">start new cycle</string>
 </resources>

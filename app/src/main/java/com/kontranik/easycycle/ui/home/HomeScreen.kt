@@ -1,6 +1,5 @@
 package com.kontranik.easycycle.ui.home
 
-import android.app.DatePickerDialog
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.gestures.snapping.rememberSnapFlingBehavior
@@ -24,12 +23,18 @@ import androidx.compose.material.icons.filled.ConfirmationNumber
 import androidx.compose.material.icons.filled.Numbers
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.Card
+import androidx.compose.material3.DatePicker
+import androidx.compose.material3.DatePickerDialog
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SelectableDates
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
+import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -61,6 +66,7 @@ import com.kontranik.easycycle.ui.appbar.AppBarAction
 import com.kontranik.easycycle.ui.calendar.CalendarViewModel
 import com.kontranik.easycycle.ui.settings.SettingsViewModel
 import com.kontranik.easycycle.ui.shared.CustomDialog
+import com.kontranik.easycycle.ui.shared.DatePickerModal
 import com.kontranik.easycycle.ui.shared.NumberPicker
 import com.kontranik.easycycle.ui.theme.EasyCycleTheme
 import com.kontranik.easycycle.ui.theme.paddingMedium
@@ -73,7 +79,6 @@ import java.util.Date
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun HomeScreen(
-    navigateBack: () -> Unit,
     navigateSettings: () -> Unit,
     settingsViewModel: SettingsViewModel = viewModel(factory = AppViewModelProvider.Factory),
     cycleViewModel: CycleViewModel = viewModel(factory = AppViewModelProvider.Factory),
@@ -86,7 +91,6 @@ fun HomeScreen(
     HomeContent(
         lastCycle = lastCycle,
         cDays = cDays,
-        navigateBack = { coroutineScope.launch { navigateBack() }},
         onOpenSettings = { coroutineScope.launch { navigateSettings() }},
         onSave = { date, length ->
             cycleViewModel.addCycle(
@@ -105,8 +109,7 @@ fun HomeScreen(
 fun HomeContent(
     lastCycle: Cycle?,
     cDays: List<CDay> = emptyList(),
-    onSave: (Date, Int) -> Unit = {d, i -> },
-    navigateBack: () -> Unit,
+    onSave: (Date, Int) -> Unit = {_, _ -> },
     onOpenSettings: () -> Unit,
 ) {
     Scaffold(
@@ -150,9 +153,9 @@ fun HomeContent(
 
 @Composable
 private fun StartDataPicker(
-    onSave: (Date, Int) -> Unit = {d, i -> }
+    onSave: (Date, Int) -> Unit = {_, _ -> }
 ) {
-    val context = LocalContext.current
+
     var currentStartDate: Date? by remember() {
         mutableStateOf(null)
     }
@@ -160,18 +163,7 @@ private fun StartDataPicker(
         mutableIntStateOf(defaultCycleLength)
     }
 
-    val datePickerDialog = DatePickerDialog(
-        context,
-        { _, selectedYear, selectedMonth, selectedDay ->
-            val newCalendar = Calendar.getInstance()
-            newCalendar.set(selectedYear, selectedMonth, selectedDay)
-            currentStartDate = newCalendar.time
-        },
-        Calendar.getInstance().get(Calendar.YEAR),
-        Calendar.getInstance().get(Calendar.MONTH),
-        Calendar.getInstance().get(Calendar.DAY_OF_MONTH),
-
-    )
+    var showDatePicker by remember { mutableStateOf(false) }
 
     var showAverageLengthPicker by rememberSaveable() {
         mutableStateOf(false)
@@ -209,7 +201,8 @@ private fun StartDataPicker(
 
                 OutlinedButton(
                     onClick = {
-                        datePickerDialog.show()
+                        //datePickerDialog.show()
+                        showDatePicker = true
                     },
                 ) {
                     Row(
@@ -324,6 +317,16 @@ private fun StartDataPicker(
             }
         }
     }
+
+    if (showDatePicker)
+        DatePickerModal(
+            onDateSelected = {
+                if (it != null) {
+                    currentStartDate = Date(it)
+                }
+            },
+            onDismiss = { showDatePicker = false }
+        )
 }
 
 
@@ -333,7 +336,6 @@ private fun HomeContentPreview() {
     EasyCycleTheme() {
         HomeContent(
             lastCycle = null,
-            navigateBack = {},
             onOpenSettings = {},
         )
     }
@@ -376,7 +378,6 @@ private fun HomeContentPreviewWithList() {
         HomeContent(
             lastCycle = lastCycle,
             cDays = cDays,
-            navigateBack = {},
             onOpenSettings = {},
         )
     }

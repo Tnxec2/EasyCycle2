@@ -2,6 +2,7 @@ package com.kontranik.easycycle.ui.calendar
 
 import android.app.DatePickerDialog
 import android.os.Build
+import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -26,6 +27,7 @@ import androidx.compose.material.icons.filled.CalendarToday
 import androidx.compose.material.icons.filled.ChevronLeft
 import androidx.compose.material.icons.filled.ChevronRight
 import androidx.compose.material.icons.filled.Menu
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.DrawerState
@@ -75,6 +77,7 @@ import com.kontranik.easycycle.database.Cycle
 import com.kontranik.easycycle.helper.TimeHelper
 import com.kontranik.easycycle.helper.getTextColorForBackground
 import com.kontranik.easycycle.model.Note
+import com.kontranik.easycycle.ui.appbar.AppBarAction
 import com.kontranik.easycycle.ui.theme.paddingMedium
 
 
@@ -105,6 +108,8 @@ fun CalendarScreen(
         }, cal.get(Calendar.YEAR), cal.get(Calendar.MONTH), cal.get(Calendar.DAY_OF_MONTH)
     )
 
+
+
     CalendarContent(
         activeCalendarDay,
         matrix,
@@ -121,8 +126,13 @@ fun CalendarScreen(
         onNextMonth = {
             calendarViewModel.activeDateSetToNextMonth()
         },
-        onAdd = {
-            cycleViewModel.addCycle(activeCalendarDay)
+        onAdd = { useActiveDate ->
+            coroutineScope.launch {
+                calendarViewModel.showDatePicker(
+                    context,
+                    useActiveDate
+                )
+            }
         },
         openCalendarDialog = {
             datePickerDialog.show()
@@ -139,14 +149,23 @@ fun CalendarContent(
     openCalendarDialog: () -> Unit = {},
     onToday: () -> Unit = {},
     onDay: (date: Date) -> Unit = {d -> },
-    onAdd: () -> Unit = {},
+    onAdd: (useActiveDate: Boolean) -> Unit = {},
     onPrevMonth: () -> Unit = {},
     onNextMonth: () -> Unit = {},
 ) {
     Scaffold(
         topBar = {
             AppBar(
-                titleRes = R.string.title_home,
+                titleRes = R.string.title_calendar,
+                appBarActions = listOf{
+                    AppBarAction(appBarAction =  AppBarAction(
+                        vector = Icons.Default.Add,
+                        description = R.string.add_cycle,
+                        onClick = {
+                            onAdd(false)
+                        }
+                    ))
+                }
             )
         }
     ) { innerPadding ->
@@ -267,7 +286,7 @@ fun CalendarContent(
                         if (activeDate.canBeAdded) {
                             IconButton(
                                 onClick = {
-                                    onAdd()
+                                    onAdd(true)
                                 }
                             ) {
                                 Icon(

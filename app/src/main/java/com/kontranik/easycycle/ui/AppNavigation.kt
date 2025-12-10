@@ -32,9 +32,6 @@ fun NavGraphBuilder.mainGraph(
             route = Screen.Home.route,
         ) {
             HomeScreen(
-                navigateBack = {
-                    navController.popBackStack()
-                },
                 navigateSettings = {
                     navController.navigate(Screen.Settings.route)
                 },

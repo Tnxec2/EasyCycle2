@@ -1,11 +1,15 @@
 package com.kontranik.easycycle.ui.calendar
 
 import android.app.Application
+import android.app.DatePickerDialog
+import android.content.Context
 import android.os.Build
 import android.util.Log
 import androidx.annotation.RequiresApi
+import androidx.compose.runtime.collectAsState
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
+import com.kontranik.easycycle.R
 import com.kontranik.easycycle.database.Cycle
 import com.kontranik.easycycle.database.CycleRepository
 import com.kontranik.easycycle.helper.PhasesHelper
@@ -17,7 +21,9 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.combineTransform
+import kotlinx.coroutines.flow.last
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.time.ZoneId
@@ -56,10 +62,15 @@ class CalendarViewModel(
     private val _activeCalendarDay = MutableStateFlow(CalendarDay(date = Date()))
     val activeCalendarDay: StateFlow<CalendarDay> = _activeCalendarDay.asStateFlow()
 
+    val lastCycle = cycleRepository.getLastOneAsFlow()
+
+
+    val averageLength = cycleRepository.getAverageLength()
+
     private val _matrix = combineTransform(
         activeDate,
-        cycleRepository.getLastOneAsFlow(),
-        cycleRepository.getAverageLength()
+        lastCycle,
+        averageLength
     ) {
         activeDate, lastCycle, averageLength ->
         val matrix = generateMatrixFromDate(activeDate)
@@ -194,6 +205,39 @@ class CalendarViewModel(
                 cell
             }
         } }
+    }
+
+    fun showDatePicker(context: Context, useActiveDate: Boolean) {
+        val cal = Calendar.getInstance()
+        if (useActiveDate) {
+            cal.time = activeDate.value
+        }
+        val datePickerForAddCycleDialog = DatePickerDialog(
+            context,
+            { _, selectedYear, selectedMonth, selectedDay ->
+                val newCalendar = Calendar.getInstance()
+                newCalendar.set(selectedYear, selectedMonth, selectedDay)
+                addActiveDateAsCycleStart(newCalendar.time)
+            },
+            cal.get(Calendar.YEAR),
+            cal.get(Calendar.MONTH),
+            cal.get(Calendar.DAY_OF_MONTH)
+        ).apply {
+            setTitle("Select date for next cycle start")
+            setCancelable(true)
+            datePicker.maxDate = Date().time
+        }
+
+        val lastCycle = cycleRepository.getLastOne()
+        lastCycle?.let {
+            datePickerForAddCycleDialog.datePicker.minDate = it.cycleStart.time
+        }
+
+        datePickerForAddCycleDialog.show()
+    }
+
+    fun addActiveDateAsCycleStart(time: Date) {
+        // TODO
     }
 
     companion object {
