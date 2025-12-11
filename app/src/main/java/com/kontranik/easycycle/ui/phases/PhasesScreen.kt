@@ -43,7 +43,6 @@ import com.kontranik.easycycle.ui.theme.paddingSmall
 import kotlinx.coroutines.launch
 
 
-@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun PhasesScreen(
     phasesViewModel: PhasesViewModel = viewModel(factory = AppViewModelProvider.Factory),

@@ -10,6 +10,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
 import com.kontranik.easycycle.ui.calendar.CalendarScreen
 import com.kontranik.easycycle.ui.home.HomeScreen
+import com.kontranik.easycycle.ui.phases.PhasesScreen
 import com.kontranik.easycycle.ui.settings.SettingsScreen
 import com.kontranik.easycycle.ui.settings.SettingsViewModel
 import kotlinx.coroutines.launch
@@ -53,11 +54,7 @@ fun NavGraphBuilder.mainGraph(
         composable(
             route = Screen.Phases.route,
         ) {
-            HomeScreen(
-                navigateSettings = {
-                    navController.navigate(Screen.Settings.route)
-                },
-                settingsViewModel = settingsViewModel
+            PhasesScreen(
             )
         }
 

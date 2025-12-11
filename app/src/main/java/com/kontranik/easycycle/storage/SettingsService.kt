@@ -47,14 +47,13 @@ class SettingsService {
             }
             if (!updated) phases.add(phase)
             saveCustomPhases(context, phases.sortedBy { it.from })
-            return phases
+            return phases.sortedBy { it.from }
         }
 
         fun removeCustomPhase(context: Context, key: Long): List<Phase> {
             val phases = loadCustomPhases(context).filter {
                 it.key != key
             }
-
             saveCustomPhases(context, phases)
             return phases
         }

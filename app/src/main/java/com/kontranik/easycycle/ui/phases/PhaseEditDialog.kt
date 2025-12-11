@@ -2,30 +2,37 @@ package com.kontranik.easycycle.ui.phases
 
 import android.os.Build
 import androidx.annotation.RequiresApi
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Card
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.core.graphics.toColorInt
 import com.kontranik.easycycle.R
@@ -49,7 +56,7 @@ fun PhaseEditDialog(
     onSave: (Phase) -> Unit = {},
     onDismiss: ()-> Unit = {},
 ) {
-    val uiState by remember(phase) { mutableStateOf<PhaseUi>(phase.toUi()) }
+    var uiState by remember(phase) { mutableStateOf<PhaseUi>(phase.toUi()) }
 
     Dialog(
         onDismissRequest = onDismiss,
@@ -64,69 +71,78 @@ fun PhaseEditDialog(
                         rememberScrollState()
                     )
             ) {
-                SettingsTextField(
-                    value = uiState.from,
-                    label = stringResource(R.string.from),
-                    maxLines = 1,
-                    onChange = {
-                        uiState.from = it
-                    },
-                    keyboardOptions = KeyboardOptions(
-                        keyboardType = KeyboardType.Number,
-                        imeAction = ImeAction.Next
+                Row(
+                    Modifier.fillMaxWidth()
+                ) {
+                    SettingsTextField(
+                        value = uiState.from,
+                        label = stringResource(R.string.from),
+                        maxLines = 1,
+                        onChange = {
+                            uiState = uiState.copy(from = it)
+                        },
+                        keyboardOptions = KeyboardOptions(
+                            keyboardType = KeyboardType.Number,
+                            imeAction = ImeAction.Next
+                        ),
+                        modifier = Modifier.weight(1f)
                     )
-                )
-                SettingsTextField(
-                    value = uiState.to,
-                    label = stringResource(R.string.to),
-                    maxLines = 1,
-                    onChange = {
-                        uiState.to = it
-                    },
-                    keyboardOptions = KeyboardOptions(
-                        keyboardType = KeyboardType.Number,
-                        imeAction = ImeAction.Next
+                    VerticalDivider(
+                        modifier = Modifier.width(paddingSmall)
                     )
-                )
+                    SettingsTextField(
+                        value = uiState.to,
+                        label = stringResource(R.string.to),
+                        maxLines = 1,
+                        onChange = {
+                            uiState = uiState.copy(to = it)
+                        },
+                        keyboardOptions = KeyboardOptions(
+                            keyboardType = KeyboardType.Number,
+                            imeAction = ImeAction.Next
+                        ),
+                        modifier = Modifier.weight(1f)
+                    )
+                }
 
                 SettingsTextField(
                     value = uiState.desc,
                     label = stringResource(R.string.description),
-                    maxLines = 5,
+                    maxLines = 3,
                     onChange = {
-                        uiState.desc = it
+                        uiState = uiState.copy(desc = it)
                     },
                     keyboardOptions = KeyboardOptions(
                         keyboardType = KeyboardType.Text,
-                        imeAction = ImeAction.Next
+                        imeAction = ImeAction.Done
                     )
                 )
 
                 SettingsColor(
                     text = stringResource(R.string.color_current),
-                    color = phase.color?.let { Color(it.toColorInt()) } ?: Color.Transparent,
+                    color = uiState.color?.let { Color(it.toColorInt()) } ?: Color.Transparent,
                     onColorChanged = { color ->
-                        uiState.color = color.toHexCodeWithAlpha()
+                        uiState = uiState.copy(color = color.toHexCodeWithAlpha())
                     },
                     onSelectDefaultColor = {
-                        uiState.color = phase.color
+                        uiState = uiState.copy(color = phase.color)
                     },
                 )
                 SettingsColor(
                     text = stringResource(R.string.color_prediction),
-                    color = phase.colorP?.let { Color(it.toColorInt()) } ?: Color.Transparent,
+                    color = uiState.colorP?.let { Color(it.toColorInt()) } ?: Color.Transparent,
                     onColorChanged = { color ->
-                        uiState.colorP = color.toHexCodeWithAlpha()
+                        uiState = uiState.copy(colorP = color.toHexCodeWithAlpha())
                     },
                     onSelectDefaultColor = {
-                        uiState.colorP = phase.colorP
+                        uiState = uiState.copy(color = phase.colorP)
                     },
                 )
                 SettingsCheckbox(
                     value = uiState.markwholephase,
                     label = stringResource(R.string.mark_whole_phase),
                     onChange = {
-                        uiState.markwholephase = it
+                        uiState = uiState.copy(markwholephase = it)
                     },
                 )
 

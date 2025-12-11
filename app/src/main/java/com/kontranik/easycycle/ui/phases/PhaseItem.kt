@@ -17,6 +17,10 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -26,7 +30,10 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.core.graphics.toColorInt
 import com.kontranik.easycycle.R
 import com.kontranik.easycycle.constants.DefaultPhasesData.Companion.ar
+import com.kontranik.easycycle.helper.getTextColorForBackground
 import com.kontranik.easycycle.model.Phase
+import com.kontranik.easycycle.ui.shared.ConfirmDialog
+import com.kontranik.easycycle.ui.shared.ConfirmDialogData
 import com.kontranik.easycycle.ui.theme.EasyCycleTheme
 import com.kontranik.easycycle.ui.theme.paddingMedium
 import com.kontranik.easycycle.ui.theme.paddingSmall
@@ -38,6 +45,8 @@ fun PhaseItem(
     onEdit: () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
+    var showConfirmDeleteDialog by rememberSaveable { mutableStateOf(false) }
+
     Card(
         modifier = modifier
     ) {
@@ -63,6 +72,10 @@ fun PhaseItem(
                         Color(phase.colorP!!.toColorInt())
                     else
                         Color.Transparent
+                    val color = if (phase.color != null)
+                        getTextColorForBackground(phase.color)
+                    else
+                        MaterialTheme.colorScheme.onSurface
                     val text = phase.to?.let { to ->
                             stringResource(R.string.phase_from_to, phase.from, to)
                         } ?:
@@ -71,6 +84,7 @@ fun PhaseItem(
                     Text(
                         text = text,
                         style = MaterialTheme.typography.titleMedium,
+                        color = color,
                         modifier = Modifier
                             .fillMaxWidth()
                             .background(bg)
@@ -80,7 +94,7 @@ fun PhaseItem(
                 }
                 IconButton(
                     onClick = {
-                        onDelete()
+                        showConfirmDeleteDialog = true
                     }
                 ) {
                     Icon(
@@ -110,14 +124,18 @@ fun PhaseItem(
                 )
 
                 Row(
-                    Modifier.fillMaxWidth()
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(top = paddingSmall)
                 ) {
                     Text(
                         text = stringResource(R.string.color_current),
                         modifier = Modifier.weight(1f)
                     )
-                    Box(
+                    Text(
+                        text = "",
                         modifier = Modifier
+                            .padding(start = paddingMedium)
                             .weight(1f)
                             .background(
                                 color = phase.color?.let { Color(it.toColorInt()) } ?: Color.Transparent
@@ -127,13 +145,16 @@ fun PhaseItem(
 
                 Row(
                     Modifier.fillMaxWidth()
+                        .padding(top = paddingSmall)
                 ) {
                     Text(
                         text = stringResource(R.string.color_prediction),
                         modifier = Modifier.weight(1f)
                     )
-                    Box(
+                    Text(
+                        text = "",
                         modifier = Modifier
+                            .padding(start = paddingMedium)
                             .weight(1f)
                             .background(
                                 color = phase.colorP?.let { Color(it.toColorInt()) } ?: Color.Transparent
@@ -148,10 +169,26 @@ fun PhaseItem(
                             } else {
                                 stringResource(R.string.mark_only_phase_start)
                         },
-                        style = MaterialTheme.typography.labelMedium
+                        style = MaterialTheme.typography.bodyMedium,
+                        modifier = Modifier.padding(top = paddingSmall)
                     )
                 }
             }
+        }
+
+        if (showConfirmDeleteDialog) {
+            ConfirmDialog(
+                data = ConfirmDialogData(
+                    show = true,
+                    title = stringResource(R.string.delete_phase_item),
+                    text = stringResource(R.string.are_you_sure_to_delete_phase),
+                    onDismiss = { showConfirmDeleteDialog = false },
+                    onConfirm = {
+                        onDelete()
+                        showConfirmDeleteDialog = false
+                    }
+                )
+            )
         }
     }
 }
