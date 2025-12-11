@@ -72,7 +72,6 @@ import com.kontranik.easycycle.ui.theme.EasyCycleTheme
 import com.kontranik.easycycle.ui.theme.paddingMedium
 import com.kontranik.easycycle.ui.theme.paddingSmall
 import kotlinx.coroutines.launch
-import java.util.Calendar
 import java.util.Date
 
 
@@ -201,7 +200,7 @@ private fun StartDataPicker(
 
                 OutlinedButton(
                     onClick = {
-                        //datePickerDialog.show()
+
                         showDatePicker = true
                     },
                 ) {
@@ -320,6 +319,7 @@ private fun StartDataPicker(
 
     if (showDatePicker)
         DatePickerModal(
+            startDate = currentStartDate,
             onDateSelected = {
                 if (it != null) {
                     currentStartDate = Date(it)

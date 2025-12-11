@@ -1,0 +1,173 @@
+package com.kontranik.easycycle.ui.phases
+
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material3.Card
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.core.graphics.toColorInt
+import com.kontranik.easycycle.R
+import com.kontranik.easycycle.constants.DefaultPhasesData.Companion.ar
+import com.kontranik.easycycle.model.Phase
+import com.kontranik.easycycle.ui.theme.EasyCycleTheme
+import com.kontranik.easycycle.ui.theme.paddingMedium
+import com.kontranik.easycycle.ui.theme.paddingSmall
+
+@Composable
+fun PhaseItem(
+    phase: Phase,
+    onDelete: () -> Unit = {},
+    onEdit: () -> Unit = {},
+    modifier: Modifier = Modifier
+) {
+    Card(
+        modifier = modifier
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(paddingSmall)
+        ) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(paddingSmall)
+            ) {
+                Box(
+                    modifier = Modifier
+                        .clip(RoundedCornerShape(percent = 50))
+                        .weight(1f)
+                ) {
+                    val bg = if (phase.color != null)
+                        Color(phase.color!!.toColorInt())
+                    else if (phase.colorP != null)
+                        Color(phase.colorP!!.toColorInt())
+                    else
+                        Color.Transparent
+                    val text = phase.to?.let { to ->
+                            stringResource(R.string.phase_from_to, phase.from, to)
+                        } ?:
+                            stringResource(R.string.phase_from, phase.from)
+
+                    Text(
+                        text = text,
+                        style = MaterialTheme.typography.titleMedium,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .background(bg)
+                            .padding(start = paddingMedium, end = paddingMedium)
+                            .padding(vertical = paddingSmall)
+                    )
+                }
+                IconButton(
+                    onClick = {
+                        onDelete()
+                    }
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Delete,
+                        contentDescription = null
+                    )
+                }
+                IconButton(
+                    onClick = {
+                        onEdit()
+                    }
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Edit,
+                        contentDescription = null
+                    )
+                }
+            }
+            Column(
+                Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = paddingSmall)
+            ) {
+                Text(
+                    text = phase.desc,
+                    style = MaterialTheme.typography.bodyMedium,
+                )
+
+                Row(
+                    Modifier.fillMaxWidth()
+                ) {
+                    Text(
+                        text = stringResource(R.string.color_current),
+                        modifier = Modifier.weight(1f)
+                    )
+                    Box(
+                        modifier = Modifier
+                            .weight(1f)
+                            .background(
+                                color = phase.color?.let { Color(it.toColorInt()) } ?: Color.Transparent
+                            )
+                    )
+                }
+
+                Row(
+                    Modifier.fillMaxWidth()
+                ) {
+                    Text(
+                        text = stringResource(R.string.color_prediction),
+                        modifier = Modifier.weight(1f)
+                    )
+                    Box(
+                        modifier = Modifier
+                            .weight(1f)
+                            .background(
+                                color = phase.colorP?.let { Color(it.toColorInt()) } ?: Color.Transparent
+                            )
+                    )
+                }
+
+                if (phase.color != null || phase.colorP != null) {
+                    Text(
+                        text = if (phase.markwholephase)  {
+                                stringResource(R.string.mark_whole_phase)
+                            } else {
+                                stringResource(R.string.mark_only_phase_start)
+                        },
+                        style = MaterialTheme.typography.labelMedium
+                    )
+                }
+            }
+        }
+    }
+}
+
+@Preview
+@Composable
+private fun CDayItemPreview() {
+    EasyCycleTheme() {
+        Surface() {
+            Column(
+                Modifier.padding(paddingMedium)
+            ) {
+                PhaseItem(
+                    phase = ar[0]
+                )
+            }
+        }
+    }
+}

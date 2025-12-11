@@ -9,6 +9,7 @@ import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.kontranik.easycycle.database.CycleViewModel
 import com.kontranik.easycycle.ui.calendar.CalendarViewModel
+import com.kontranik.easycycle.ui.phases.PhasesViewModel
 import com.kontranik.easycycle.ui.settings.SettingsViewModel
 
 
@@ -36,6 +37,12 @@ object AppViewModelProvider {
 
         initializer {
             SettingsViewModel(
+                application().applicationContext,
+            )
+        }
+
+        initializer {
+            PhasesViewModel(
                 application().applicationContext,
             )
         }

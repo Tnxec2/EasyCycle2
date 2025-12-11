@@ -16,6 +16,8 @@ import com.kontranik.easycycle.helper.PhasesHelper
 import com.kontranik.easycycle.helper.TimeHelper
 import com.kontranik.easycycle.model.Note
 import com.kontranik.easycycle.ui.calendar.model.MarkedDate
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -50,7 +52,6 @@ data class CalendarDay(
     val canBeAdded: Boolean = false,
 )
 
-@RequiresApi(Build.VERSION_CODES.O)
 class CalendarViewModel(
     val app: Application,
     private val cycleRepository: CycleRepository
@@ -207,37 +208,29 @@ class CalendarViewModel(
         } }
     }
 
-    fun showDatePicker(context: Context, useActiveDate: Boolean) {
-        val cal = Calendar.getInstance()
-        if (useActiveDate) {
-            cal.time = activeDate.value
-        }
-        val datePickerForAddCycleDialog = DatePickerDialog(
-            context,
-            { _, selectedYear, selectedMonth, selectedDay ->
-                val newCalendar = Calendar.getInstance()
-                newCalendar.set(selectedYear, selectedMonth, selectedDay)
-                addActiveDateAsCycleStart(newCalendar.time)
-            },
-            cal.get(Calendar.YEAR),
-            cal.get(Calendar.MONTH),
-            cal.get(Calendar.DAY_OF_MONTH)
-        ).apply {
-            setTitle("Select date for next cycle start")
-            setCancelable(true)
-            datePicker.maxDate = Date().time
-        }
-
-        val lastCycle = cycleRepository.getLastOne()
-        lastCycle?.let {
-            datePickerForAddCycleDialog.datePicker.minDate = it.cycleStart.time
-        }
-
-        datePickerForAddCycleDialog.show()
-    }
 
     fun addActiveDateAsCycleStart(time: Date) {
-        // TODO
+        viewModelScope.launch(Dispatchers.IO) {
+            Log.d("CalendarViewModel", "addActiveDateAsCycleStart: ${time.toString()}")
+            val lastCycle = cycleRepository.getLastOne()
+
+            val lengthOfLastCycle = if ( lastCycle == null ) {
+                0
+            } else {
+                (time.time - lastCycle.cycleStart.time) / (1000 * 60 * 60 * 24)
+            }
+
+            Log.d("CalendarViewModel", "addActiveDateAsCycleStart: $lengthOfLastCycle")
+
+            cycleRepository.add(
+                Cycle(
+                    month = time.month,
+                    year = time.year,
+                    cycleStart = time,
+                    lengthOfLastCycle = lengthOfLastCycle.toInt()
+                )
+            )
+        }
     }
 
     companion object {
@@ -253,18 +246,18 @@ class CalendarViewModel(
         val sdfISO = SimpleDateFormat(MyCalendarMarkedDateFormat, Locale.US)
 
         fun formatDateToDayOfWeek(date: Date): String {
-            val formatter = DateTimeFormatter.ofPattern(MyCalendarWeekdayFormat, java.util.Locale.getDefault())
-            return formatter.format(date.toInstant().atZone(ZoneId.systemDefault()).toLocalDate())
+            val formatter = SimpleDateFormat(MyCalendarWeekdayFormat, java.util.Locale.getDefault())
+            return formatter.format(date)
         }
 
         fun formatDateToString(date: Date): String {
-            val formatter = DateTimeFormatter.ofPattern(MyCalendarTitleDayFormat, java.util.Locale.getDefault())
-            return formatter.format(date.toInstant().atZone(ZoneId.systemDefault()).toLocalDate())
+            val formatter = SimpleDateFormat(MyCalendarTitleDayFormat, java.util.Locale.getDefault())
+            return formatter.format(date)
         }
 
         fun formatDateToMonth(date: Date): String {
-            val formatter = DateTimeFormatter.ofPattern(MyCalendarTitleFormat, java.util.Locale.getDefault())
-            return formatter.format(date.toInstant().atZone(ZoneId.systemDefault()).toLocalDate())
+            val formatter = SimpleDateFormat(MyCalendarTitleFormat, java.util.Locale.getDefault())
+            return formatter.format(date)
         }
 
         fun isActiveDay(calendar: Calendar, activeDate: Calendar) =

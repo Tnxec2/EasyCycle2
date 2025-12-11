@@ -2,33 +2,18 @@ package com.kontranik.easycycle.ui
 
 import android.os.Build
 import android.util.Log
-import androidx.activity.compose.BackHandler
 import androidx.annotation.RequiresApi
-import androidx.compose.foundation.isSystemInDarkTheme
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ListAlt
 import androidx.compose.material.icons.filled.CalendarMonth
 import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.StackedBarChart
-import androidx.compose.material3.DrawerState
-import androidx.compose.material3.DrawerValue
-import androidx.compose.material3.ModalNavigationDrawer
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
-import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.compositionLocalOf
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
-import androidx.compose.ui.Modifier
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -36,12 +21,10 @@ import androidx.navigation.compose.rememberNavController
 import com.kontranik.easycycle.AppViewModelProvider
 import com.kontranik.easycycle.R
 import com.kontranik.easycycle.ui.DrawerParams.drawerButtons
-import com.kontranik.easycycle.ui.settings.SettingsViewModel
-import com.kontranik.easycycle.ui.theme.EasyCycleTheme
-import com.kontranik.easycycle.ui.appdrawer.AppDrawerContent
 import com.kontranik.easycycle.ui.appdrawer.AppDrawerItemInfo
 import com.kontranik.easycycle.ui.appnavigation.AppNavigationScaffold
-import kotlinx.coroutines.launch
+import com.kontranik.easycycle.ui.settings.SettingsViewModel
+import com.kontranik.easycycle.ui.theme.EasyCycleTheme
 
 data class DarkTheme(val isDark: Boolean = false)
 
@@ -126,16 +109,16 @@ object DrawerParams {
             title = R.string.title_calendar
         ),
         AppDrawerItemInfo(
+            drawerOption =  Screen.Statistic,
+            descriptionId = R.string.title_statistic,
+            imageVector = Icons.Default.StackedBarChart,
+            title = R.string.title_statistic
+        ),
+        AppDrawerItemInfo(
             drawerOption =  Screen.Phases,
             descriptionId = R.string.title_phases,
             imageVector = Icons.AutoMirrored.Filled.ListAlt,
             title = R.string.title_phases
         ),
-        AppDrawerItemInfo(
-            drawerOption =  Screen.Statistic,
-            descriptionId = R.string.title_statistic,
-            imageVector = Icons.Default.StackedBarChart,
-            title = R.string.title_statistic
-        )
     )
 }

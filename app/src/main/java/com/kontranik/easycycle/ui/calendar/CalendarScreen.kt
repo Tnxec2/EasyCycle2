@@ -20,6 +20,8 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.Colors
+import androidx.compose.material.contentColorFor
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.CalendarMonth
@@ -45,6 +47,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -78,7 +81,9 @@ import com.kontranik.easycycle.helper.TimeHelper
 import com.kontranik.easycycle.helper.getTextColorForBackground
 import com.kontranik.easycycle.model.Note
 import com.kontranik.easycycle.ui.appbar.AppBarAction
+import com.kontranik.easycycle.ui.shared.DatePickerModal
 import com.kontranik.easycycle.ui.theme.paddingMedium
+import kotlin.time.Clock.System.now
 
 
 @RequiresApi(Build.VERSION_CODES.O)
@@ -99,21 +104,20 @@ fun CalendarScreen(
 
     val cal = Calendar.getInstance()
 
-    val datePickerDialog = DatePickerDialog(
-        context,
-        { _, selectedYear, selectedMonth, selectedDay ->
-            val newCalendar = Calendar.getInstance()
-            newCalendar.set(selectedYear, selectedMonth, selectedDay)
-            calendarViewModel.setActiveDate(newCalendar.time)
-        }, cal.get(Calendar.YEAR), cal.get(Calendar.MONTH), cal.get(Calendar.DAY_OF_MONTH)
-    )
+//    val datePickerDialog = DatePickerDialog(
+//        context,
+//        { _, selectedYear, selectedMonth, selectedDay ->
+//            val newCalendar = Calendar.getInstance()
+//            newCalendar.set(selectedYear, selectedMonth, selectedDay)
+//            calendarViewModel.setActiveDate(newCalendar.time)
+//        }, cal.get(Calendar.YEAR), cal.get(Calendar.MONTH), cal.get(Calendar.DAY_OF_MONTH)
+//    )
 
 
 
     CalendarContent(
         activeCalendarDay,
         matrix,
-        navigateBack = { coroutineScope.launch { navigateBack() } },
         onDay = { date ->
             calendarViewModel.setActiveDate(date)
         },
@@ -126,16 +130,8 @@ fun CalendarScreen(
         onNextMonth = {
             calendarViewModel.activeDateSetToNextMonth()
         },
-        onAdd = { useActiveDate ->
-            coroutineScope.launch {
-                calendarViewModel.showDatePicker(
-                    context,
-                    useActiveDate
-                )
-            }
-        },
-        openCalendarDialog = {
-            datePickerDialog.show()
+        onSetActiveDate = {
+            calendarViewModel.addActiveDateAsCycleStart(Date(it))
         }
     )
 }
@@ -145,14 +141,16 @@ fun CalendarScreen(
 fun CalendarContent(
     activeDate: CalendarDay,
     matrix: List<List<CalendarDay>>,
-    navigateBack: () -> Unit = {},
-    openCalendarDialog: () -> Unit = {},
+    onSetActiveDate: (Long) -> Unit = {},
     onToday: () -> Unit = {},
     onDay: (date: Date) -> Unit = {d -> },
-    onAdd: (useActiveDate: Boolean) -> Unit = {},
     onPrevMonth: () -> Unit = {},
     onNextMonth: () -> Unit = {},
 ) {
+    var showDatePicker by remember { mutableStateOf(false) }
+    var currentStartDate by remember { mutableStateOf(Date()) }
+
+
     Scaffold(
         topBar = {
             AppBar(
@@ -162,7 +160,8 @@ fun CalendarContent(
                         vector = Icons.Default.Add,
                         description = R.string.add_cycle,
                         onClick = {
-                            onAdd(false)
+                            currentStartDate = Date()
+                            showDatePicker = true
                         }
                     ))
                 }
@@ -209,7 +208,7 @@ fun CalendarContent(
                         modifier = Modifier
                             .weight(1f)
                             .clickable {
-                                openCalendarDialog()
+                                showDatePicker = true
                             }
                     )
                     IconButton(
@@ -262,7 +261,7 @@ fun CalendarContent(
                                 .clip(RoundedCornerShape(percent = 50))
                                 .background(
                                     color = activeDate.mark?.color?.let {
-                                        Color(android.graphics.Color.parseColor(it))
+                                        Color(it.toColorInt())
                                     } ?: Color.Transparent,
                                 )
                         ) {
@@ -286,7 +285,8 @@ fun CalendarContent(
                         if (activeDate.canBeAdded) {
                             IconButton(
                                 onClick = {
-                                    onAdd(true)
+                                    currentStartDate = activeDate.date
+                                    showDatePicker = true
                                 }
                             ) {
                                 Icon(
@@ -310,6 +310,19 @@ fun CalendarContent(
                     }
                 }
             }
+
+            if (showDatePicker)
+                DatePickerModal(
+                    title = stringResource(id = R.string.select_date_for_new_cycle_start),
+                    startDate = currentStartDate,
+                    onDateSelected = {
+                        Log.d("CalendarScreen", "onDateSelected: $it")
+                        it?.let { time ->
+                            onSetActiveDate(time)
+                        }
+                    },
+                    onDismiss = { showDatePicker = false }
+                )
         }
     }
 }
@@ -356,10 +369,10 @@ fun Calendar(
                         Color(day.mark.color.toColorInt())
                     else
                         Color.Transparent
-                    var color = if (day.sunday)
-                        Color.Red
-                    else
-                        MaterialTheme.colorScheme.onSurface
+                    var color = getTextColorForBackground(
+                        color = if (day.mark?.color != null) day.mark.color else null,
+                        defaultColor = if (day.sunday)
+                            Color.Red else MaterialTheme.colorScheme.onSurface)
                     if (!day.currentMonth)
                         color = color.copy(alpha = 0.5f)
 
@@ -416,7 +429,6 @@ private fun CalendarContentPreview() {
         CalendarContent(
             activeDate = activeDate,
             matrix = matrix,
-            navigateBack = {},
         )
     }
 }

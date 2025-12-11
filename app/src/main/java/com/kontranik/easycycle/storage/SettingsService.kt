@@ -2,12 +2,11 @@ package com.kontranik.easycycle.storage
 
 import android.content.Context
 import android.content.SharedPreferences
-import android.util.Log
 import com.google.gson.Gson
 import com.kontranik.easycycle.constants.DefaultPhasesData
-import com.kontranik.easycycle.model.LastCycle
 import com.kontranik.easycycle.model.Phase
 import com.kontranik.easycycle.model.Settings
+import androidx.core.content.edit
 
 
 class SettingsService {
@@ -30,8 +29,8 @@ class SettingsService {
             return gson.fromJson(settings, Settings::class.java)
         }
 
-        fun saveCustomPhase(context: Context, phase: Phase): MutableList<Phase> {
-            var phases = loadCustomPhases(context).toMutableList()
+        fun saveCustomPhase(context: Context, phase: Phase): List<Phase> {
+            val phases = loadCustomPhases(context).toMutableList()
             var updated = false
             for( i in phases.indices) {
                 val it = phases[i]
@@ -47,6 +46,15 @@ class SettingsService {
                 }
             }
             if (!updated) phases.add(phase)
+            saveCustomPhases(context, phases.sortedBy { it.from })
+            return phases
+        }
+
+        fun removeCustomPhase(context: Context, key: Long): List<Phase> {
+            val phases = loadCustomPhases(context).filter {
+                it.key != key
+            }
+
             saveCustomPhases(context, phases)
             return phases
         }
@@ -54,16 +62,17 @@ class SettingsService {
         fun saveCustomPhases(context: Context, phases: List<Phase>) {
             val sharedPreferences: SharedPreferences =
                 context.getSharedPreferences(preferenceFileName, 0)
-            val sharedPreferencesEditor = sharedPreferences.edit()
-            val resultSet = mutableSetOf<String>()
-            phases.forEach {
-                val serializedObject = gson.toJson(it)
-                if (serializedObject != null) {
-                    resultSet.add(serializedObject)
+            sharedPreferences.edit {
+                val resultSet = mutableSetOf<String>()
+                phases.forEach {
+                    val serializedObject = gson.toJson(it)
+                    if (serializedObject != null) {
+                        resultSet.add(serializedObject)
+                    }
                 }
+                putStringSet(CUSTOM_PHASES, resultSet)
+                apply()
             }
-            sharedPreferencesEditor.putStringSet(CUSTOM_PHASES, resultSet)
-            sharedPreferencesEditor.apply()
         }
 
         fun loadCustomPhases(context: Context): List<Phase> {
@@ -76,18 +85,20 @@ class SettingsService {
                     val phase = gson.fromJson(it, Phase::class.java)
                     if ( phase != null) result.add(phase)
                 }
-                result
+                result.sortedBy { it.from }
             } else {
-                DefaultPhasesData.ar
+                DefaultPhasesData.ar.sortedBy { it.from }
             }
         }
 
-        fun removeCustomPhases(context: Context) {
+        fun wipeCustomPhases(context: Context): List<Phase> {
             val sharedPreferences: SharedPreferences =
                 context.getSharedPreferences(preferenceFileName, 0)
-            val sharedPreferencesEditor = sharedPreferences.edit()
-            sharedPreferencesEditor.remove(CUSTOM_PHASES)
-            sharedPreferencesEditor.apply()
+            sharedPreferences.edit {
+                remove(CUSTOM_PHASES)
+                apply()
+            }
+            return DefaultPhasesData.ar.sortedBy { it.from }
         }
 
         private const val preferenceFileName = "EASYCYCLE_PREFS"

@@ -50,6 +50,27 @@ fun NavGraphBuilder.mainGraph(
             )
         }
 
+        composable(
+            route = Screen.Phases.route,
+        ) {
+            HomeScreen(
+                navigateSettings = {
+                    navController.navigate(Screen.Settings.route)
+                },
+                settingsViewModel = settingsViewModel
+            )
+        }
+
+        composable(
+            route = Screen.Statistic.route,
+        ) {
+            HomeScreen(
+                navigateSettings = {
+                    navController.navigate(Screen.Settings.route)
+                },
+                settingsViewModel = settingsViewModel
+            )
+        }
 
         composable(
             route = Screen.Settings.route,
