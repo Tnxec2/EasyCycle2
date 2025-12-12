@@ -148,7 +148,7 @@ fun StatisticScreenContent(
                 ) {
                     averageLength?.let {
                         Text(
-                            text = stringResource(R.string.average_cycle_length_statistic, it),
+                            text = stringResource(R.string.average_cycle_length_statistic, 12,it),
                             fontWeight = FontWeight.Bold,
                             style = MaterialTheme.typography.titleLarge,
                             modifier = Modifier

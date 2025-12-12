@@ -5,6 +5,7 @@ import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.Query
 import androidx.room.Update
+import com.kontranik.easycycle.constants.DefaultSettings.Companion.monthsForAverageCycleLength
 import kotlinx.coroutines.flow.Flow
 import java.util.Date
 
@@ -32,7 +33,7 @@ interface CycleDao {
     fun getLastAsFlow(): Flow<Cycle?>
 
     @Query("SELECT AVG(last_cycle_length) FROM (SELECT last_cycle_length FROM cycles_archive ORDER BY cyclestart DESC LIMIT :limit)")
-    fun getAverageLengthOfLastMonths(limit: Int = 12): Flow<Int?>
+    fun getAverageLengthOfLastMonths(limit: Int = monthsForAverageCycleLength): Flow<Int?>
 
     @Insert
     fun insert(cycle: Cycle): Long

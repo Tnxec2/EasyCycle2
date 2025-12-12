@@ -104,7 +104,7 @@ fun StatisticImportDialog(
 
                     OutlinedButton(
                         onClick = {
-                            openDocumentLauncher.launch(arrayOf("text/csv"))
+                            openDocumentLauncher.launch(arrayOf("text/*"))
                         }
                     ) {
                         Text(

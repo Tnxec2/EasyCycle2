@@ -76,7 +76,7 @@ class CycleRepository(private val cycleDao: CycleDao) {
     }
 
     fun getAverageLength(): Flow<Int?> {
-        return cycleDao.getAverageLengthOfLastMonths()
+        return cycleDao.getAverageLengthOfLastMonths(DefaultSettings.monthsForAverageCycleLength)
     }
 
     fun deleteById(id: Long) {

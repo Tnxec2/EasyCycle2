@@ -1,6 +1,7 @@
 package com.kontranik.easycycle.ui.phases
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -11,6 +12,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.Card
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -25,8 +27,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import androidx.core.graphics.toColorInt
 import com.kontranik.easycycle.R
 import com.kontranik.easycycle.constants.DefaultPhasesData.Companion.ar
@@ -59,23 +63,13 @@ fun PhaseItem(
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(paddingSmall)
+                    .padding(horizontal = paddingSmall)
             ) {
                 Box(
                     modifier = Modifier
                         .clip(RoundedCornerShape(percent = 50))
                         .weight(1f)
                 ) {
-                    val bg = if (phase.color != null)
-                        Color(phase.color!!.toColorInt())
-                    else if (phase.colorP != null)
-                        Color(phase.colorP!!.toColorInt())
-                    else
-                        Color.Transparent
-                    val color = if (phase.color != null)
-                        getTextColorForBackground(phase.color)
-                    else
-                        MaterialTheme.colorScheme.onSurface
                     val text = phase.to?.let { to ->
                             stringResource(R.string.phase_from_to, phase.from, to)
                         } ?:
@@ -84,11 +78,8 @@ fun PhaseItem(
                     Text(
                         text = text,
                         style = MaterialTheme.typography.titleMedium,
-                        color = color,
                         modifier = Modifier
                             .fillMaxWidth()
-                            .background(bg)
-                            .padding(start = paddingMedium, end = paddingMedium)
                             .padding(vertical = paddingSmall)
                     )
                 }
@@ -113,6 +104,9 @@ fun PhaseItem(
                     )
                 }
             }
+            HorizontalDivider(
+                Modifier.padding(bottom = paddingSmall)
+            )
             Column(
                 Modifier
                     .fillMaxWidth()
@@ -140,6 +134,7 @@ fun PhaseItem(
                             .background(
                                 color = phase.color?.let { Color(it.toColorInt()) } ?: Color.Transparent
                             )
+                            .border(1.dp, MaterialTheme.colorScheme.onSurface, RectangleShape)
                     )
                 }
 
@@ -159,6 +154,7 @@ fun PhaseItem(
                             .background(
                                 color = phase.colorP?.let { Color(it.toColorInt()) } ?: Color.Transparent
                             )
+                            .border(1.dp, MaterialTheme.colorScheme.onSurface, RectangleShape)
                     )
                 }
 
