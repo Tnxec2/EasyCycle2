@@ -6,7 +6,7 @@ import androidx.annotation.RequiresApi
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ListAlt
 import androidx.compose.material.icons.filled.CalendarMonth
-import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.StackedBarChart
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
@@ -103,7 +103,7 @@ object DrawerParams {
         AppDrawerItemInfo(
             drawerOption = Screen.Home,
             descriptionId = R.string.title_home,
-            imageVector = Icons.Default.Home,
+            imageVector = Icons.Default.Info,
             title = R.string.title_home,
             navigationId = navigation_info
         ),

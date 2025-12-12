@@ -42,7 +42,7 @@
     <string name="select_date_for_new_cycle_start">Select date for new cycle start</string>
     <string name="add_new_phase">Add new phase</string>
     <string name="phase_description_placeholder">phase description</string>
-    <string name="no_statistic_data"><br>No data exist.\n\nEnter the last cycle start date in the "calendar" or import data from CSV by Import-Button.</br></string>
+    <string name="no_statistic_data"><br>No data exist.\n\nEnter the last cycle start date on the calendar or info screen, or import data from CSV by Import-Button.</br></string>
     <string name="load_predefined_phases">load predefined phases</string>
     <string name="no_custom_phases_set">no custom phases set</string>
     <string name="are_you_sure_to_load_predefined_phases">are you sure to load predefined phases. all your changes will be lost</string>

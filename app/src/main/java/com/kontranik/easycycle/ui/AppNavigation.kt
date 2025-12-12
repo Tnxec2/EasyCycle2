@@ -13,6 +13,7 @@ import com.kontranik.easycycle.ui.home.HomeScreen
 import com.kontranik.easycycle.ui.phases.PhasesScreen
 import com.kontranik.easycycle.ui.settings.SettingsScreen
 import com.kontranik.easycycle.ui.settings.SettingsViewModel
+import com.kontranik.easycycle.ui.statistic.StatisticScreen
 import kotlinx.coroutines.launch
 
 // Navigation Setup
@@ -35,8 +36,7 @@ fun NavGraphBuilder.mainGraph(
             HomeScreen(
                 navigateSettings = {
                     navController.navigate(Screen.Settings.route)
-                },
-                settingsViewModel = settingsViewModel
+                }
             )
         }
 
@@ -61,11 +61,8 @@ fun NavGraphBuilder.mainGraph(
         composable(
             route = Screen.Statistic.route,
         ) {
-            HomeScreen(
-                navigateSettings = {
-                    navController.navigate(Screen.Settings.route)
-                },
-                settingsViewModel = settingsViewModel
+            StatisticScreen(
+
             )
         }
 

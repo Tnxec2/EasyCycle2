@@ -16,6 +16,9 @@ interface CycleDao {
     @Query("SELECT * FROM cycles_archive WHERE year > :year ORDER BY cyclestart DESC")
     fun getAllByYearsAmount(year: Int): List<Cycle>
 
+    @Query("DELETE FROM cycles_archive WHERE year < :year")
+    fun removeAllOld(year: Int)
+
     @Query("SELECT * FROM cycles_archive WHERE _id = :id")
     fun getById(id: Long): Cycle?
 

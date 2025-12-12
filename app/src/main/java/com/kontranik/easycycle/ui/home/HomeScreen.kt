@@ -79,7 +79,6 @@ import java.util.Date
 @Composable
 fun HomeScreen(
     navigateSettings: () -> Unit,
-    settingsViewModel: SettingsViewModel = viewModel(factory = AppViewModelProvider.Factory),
     cycleViewModel: CycleViewModel = viewModel(factory = AppViewModelProvider.Factory),
 ) {
     val coroutineScope = rememberCoroutineScope()

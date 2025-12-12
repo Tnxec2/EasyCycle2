@@ -11,6 +11,7 @@ import com.kontranik.easycycle.database.CycleViewModel
 import com.kontranik.easycycle.ui.calendar.CalendarViewModel
 import com.kontranik.easycycle.ui.phases.PhasesViewModel
 import com.kontranik.easycycle.ui.settings.SettingsViewModel
+import com.kontranik.easycycle.ui.statistic.StatisticViewModel
 
 
 /**
@@ -49,6 +50,13 @@ object AppViewModelProvider {
 
         initializer {
             CalendarViewModel(
+                application(),
+                application().container.cycleRepository
+            )
+        }
+
+        initializer {
+            StatisticViewModel(
                 application(),
                 application().container.cycleRepository
             )

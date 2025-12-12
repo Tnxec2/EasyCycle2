@@ -54,7 +54,7 @@ fun AppNavigationScaffold(
                         onClick(it.drawerOption)
                     },
                     label = {
-                        if (showLabel) Text(stringResource(it.descriptionId))
+                        if (showLabel || it.drawerOption.route == currentPick) Text(stringResource(it.descriptionId))
                     }
                 )
             }

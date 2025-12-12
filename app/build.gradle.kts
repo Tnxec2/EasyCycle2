@@ -61,13 +61,13 @@ dependencies {
     androidTestImplementation(libs.androidx.compose.ui.test.junit4)
     debugImplementation(libs.androidx.compose.ui.tooling)
     debugImplementation(libs.androidx.compose.ui.test.manifest)    // extended icons
-    implementation("androidx.compose.material:material-icons-extended:1.7.8")
-    implementation("androidx.compose.material:material:1.10.0")
+    implementation(libs.androidx.compose.material.icons.extended)
+    implementation(libs.androidx.compose.material)
 
-    implementation("androidx.room:room-runtime:2.8.4")
-    implementation("androidx.room:room-ktx:2.8.4")
-    ksp("androidx.room:room-compiler:2.8.4")
+    implementation(libs.androidx.room.runtime)
+    implementation(libs.androidx.room.ktx)
+    ksp(libs.androidx.room.compiler)
 
-    implementation("com.google.code.gson:gson:2.8.8")
-    implementation("com.github.skydoves:colorpicker-compose:1.1.3")
+    implementation(libs.gson)
+    implementation(libs.colorpicker.compose)
 }

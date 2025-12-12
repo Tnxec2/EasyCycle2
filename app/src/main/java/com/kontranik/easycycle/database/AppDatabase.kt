@@ -23,7 +23,6 @@ abstract class AppDatabase : RoomDatabase() {
                     AppDatabase::class.java,
                     "easycycle.db"
                 )
-                .fallbackToDestructiveMigration()
                 .allowMainThreadQueries() // For now, to match original behavior
                 .build()
                 INSTANCE = instance

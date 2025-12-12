@@ -1,8 +1,10 @@
 package com.kontranik.easycycle.database
 
 import android.util.Log
+import com.kontranik.easycycle.constants.DefaultSettings
 import com.kontranik.easycycle.model.LastCycle
 import com.kontranik.easycycle.model.StatisticItem
+import com.kontranik.easycycle.ui.calendar.Calendar
 import kotlinx.coroutines.flow.Flow
 import java.util.*
 import kotlin.collections.HashMap
@@ -41,6 +43,14 @@ class CycleRepository(private val cycleDao: CycleDao) {
         return result
     }
 
+    fun clearOldStatistic() {
+        val calendar = Calendar.getInstance()
+        calendar.add(Calendar.YEAR, -DefaultSettings.yearsToLeave)
+        Log.d("CycleRepository", "clearOldStatistic ${DefaultSettings.yearsToLeave} years - ${calendar.get(Calendar.YEAR)}")
+        cycleDao.removeAllOld(calendar.get(Calendar.YEAR))
+    }
+
+
     fun getLastOne(): LastCycle? {
         return cycleDao.getLast()?.toLastCycle()
     }
@@ -51,9 +61,17 @@ class CycleRepository(private val cycleDao: CycleDao) {
 
     fun add(cycle: Cycle) {
         Log.d("CycleRepository", "add")
+
+        Calendar.getInstance().time = cycle.cycleStart
+        cycle.year = Calendar.getInstance().get(Calendar.YEAR)
+        cycle.month = Calendar.getInstance().get(Calendar.MONTH)
+
         val item = cycleDao.getByDate(cycle.cycleStart)
         if (item == null) {
             cycleDao.insert(cycle)
+        } else {
+            cycle.id = item.id
+            cycleDao.update(cycle)
         }
     }
 
