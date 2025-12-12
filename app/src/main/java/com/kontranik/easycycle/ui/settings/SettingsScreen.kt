@@ -46,11 +46,11 @@ fun SettingsScreen(
     settingsViewModel: SettingsViewModel = viewModel(factory = AppViewModelProvider.Factory)
 ) {
     val coroutineScope = rememberCoroutineScope()
-    val settingsState = settingsViewModel.settingsState.collectAsState()
+    val settingsState by settingsViewModel.settingsState.collectAsState()
 
     SettingsContent(
         navigateBack = { coroutineScope.launch { navigateBack() }},
-        settings = settingsState.value,
+        settings = settingsState,
         onChangeShowOnStart = {
             coroutineScope.launch {
                 settingsViewModel.changeShowOnStart(it)
@@ -109,7 +109,6 @@ fun SettingsContent(
                     entryTitles = SettingsViewModel.drawerTitles.map { stringResource(it) },
                     entryValues = SettingsViewModel.drawerNavigationIds,
                     defaultValue = settingsState.showOnStart,
-                    defaultValueTitle = stringResource(R.string.title_home),
                     onChange = { showOnStart ->
                         settingsState = settingsState.copy(
                             showOnStart = showOnStart
