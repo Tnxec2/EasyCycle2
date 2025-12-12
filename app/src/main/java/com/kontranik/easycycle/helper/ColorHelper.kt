@@ -13,9 +13,11 @@ import androidx.core.graphics.toColorInt
  * @return `Color.Black` für helle Hintergründe und `Color.White` für dunkle Hintergründe.
  */
 @Composable
-fun getTextColorForBackground(color: String?, defaultColor: Color = MaterialTheme.colors.onSurface): Color {
+fun getTextColorForBackground(
+    color: String?,
+    defaultColor: Color = MaterialTheme.colors.onSurface): Color {
     if (color == null) {
-        return MaterialTheme.colors.onSurface // Standardfarbe, falls kein Hintergrund vorhanden
+        return defaultColor // Standardfarbe, falls kein Hintergrund vorhanden
     }
 
     val parsedColor = color.toColorInt()

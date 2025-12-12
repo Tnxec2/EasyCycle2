@@ -48,7 +48,7 @@ fun MainCompose(
     }
 
     CompositionLocalProvider() {
-        EasyCycleTheme(darkTheme = LocalTheme.current.isDark)
+        EasyCycleTheme()
         {
             Surface {
                 AppNavigationScaffold(

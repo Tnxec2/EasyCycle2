@@ -382,9 +382,15 @@ fun Calendar(
                     else
                         Color.Transparent
                     var color = getTextColorForBackground(
-                        color = if (day.mark?.color != null) day.mark.color else null,
+                        color = if (day.mark?.color != null)
+                            day.mark.color
+                        else
+                            null,
                         defaultColor = if (day.sunday)
-                            Color.Red else MaterialTheme.colorScheme.onSurface)
+                            Color.Red
+                        else
+                            MaterialTheme.colorScheme.onSurface
+                    )
                     if (!day.currentMonth)
                         color = color.copy(alpha = 0.5f)
 
