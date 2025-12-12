@@ -13,6 +13,7 @@ import com.kontranik.easycycle.model.LastCycle
 import com.kontranik.easycycle.model.Phase
 import com.kontranik.easycycle.model.Settings
 import com.kontranik.easycycle.model.StatisticItem
+import com.kontranik.easycycle.ui.calendar.CalendarViewModel.Companion.sdfISO
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.io.BufferedReader
@@ -21,7 +22,7 @@ import java.io.InputStreamReader
 import java.text.SimpleDateFormat
 import java.util.Locale
 
-val sdfIso = SimpleDateFormat("yyyy-MM-dd", Locale.US)
+
 
 class MainViewModel(
     private val context: Context,
@@ -123,7 +124,7 @@ class MainViewModel(
                             val ar = line.split(delimiter)
                             if (ar.size >= 2) {
                                 try {
-                                    val cycleStart = sdfIso.parse(ar[0])
+                                    val cycleStart = sdfISO.parse(ar[0])
                                     val length = ar[1].toInt()
                                     if (cycleStart != null) {
                                         val cycleItem = Cycle(

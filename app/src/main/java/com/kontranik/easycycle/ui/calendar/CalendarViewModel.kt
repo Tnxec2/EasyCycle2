@@ -234,7 +234,7 @@ class CalendarViewModel(
     }
 
     companion object {
-        const val MyCalendarMarkedDateFormat: String = "yyyy-MM-dd"
+
         const val MyCalendarTitleFormat: String = "MMM yyyy"
         const val MyCalendarTitleDayFormat: String = "dd. MMM yyyy"
         const val MyCalendarWeekdayFormat: String = "EE"
@@ -243,7 +243,16 @@ class CalendarViewModel(
         private const val ROWS_IN_CALENDAR = 6
         private const val DAYS_IN_ROW = 7
 
-        val sdfISO = SimpleDateFormat(MyCalendarMarkedDateFormat, Locale.US)
+        const val sdfIsoPattern = "yyyy-MM-dd"
+        val sdfISO = SimpleDateFormat(sdfIsoPattern, Locale.US)
+
+        const val sdfIsoShortPattern = "yy-MM-dd"
+        val sdfIsoShort = SimpleDateFormat(sdfIsoShortPattern, Locale.US)
+
+        val map = hashMapOf<String, SimpleDateFormat>(
+            sdfIsoPattern to sdfISO,
+            sdfIsoShortPattern to sdfIsoShort
+        )
 
         fun formatDateToDayOfWeek(date: Date): String {
             val formatter = SimpleDateFormat(MyCalendarWeekdayFormat, java.util.Locale.getDefault())

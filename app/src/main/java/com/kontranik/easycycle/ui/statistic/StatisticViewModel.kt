@@ -8,8 +8,8 @@ import androidx.lifecycle.viewModelScope
 import com.kontranik.easycycle.database.Cycle
 import com.kontranik.easycycle.database.CycleRepository
 import com.kontranik.easycycle.model.StatisticItem
-import com.kontranik.easycycle.sdfIso
 import com.kontranik.easycycle.storage.SettingsService
+import com.kontranik.easycycle.ui.calendar.CalendarViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -70,18 +70,21 @@ class StatisticViewModel(
                     if ( delimiter != "") {
                         val ar = line.split(delimiter)
                         if (ar.size >= 2) {
-                            try {
-                                val cycleStart = sdfIso.parse(ar[0])
-                                val length = ar[1].toInt()
-                                if (cycleStart != null) {
-                                    val cycleItem = Cycle(
-                                        cycleStart = cycleStart,
-                                        lengthOfLastCycle = length
-                                    )
-                                    cycles.add(cycleItem)
+                            for(pattern in CalendarViewModel.map.keys) {
+                                try {
+                                    val cycleStartString = ar[0]
+                                    val cycleStart = CalendarViewModel.map[pattern]?.parse(cycleStartString)
+                                    val length = ar[1].toInt()
+                                    if (cycleStart != null) {
+                                        val cycleItem = Cycle(
+                                            cycleStart = cycleStart,
+                                            lengthOfLastCycle = length
+                                        )
+                                        cycles.add(cycleItem)
+                                    }
+                                } catch (e: Exception) {
+                                    // e.printStackTrace()
                                 }
-                            } catch (e: Exception) {
-                                e.printStackTrace()
                             }
                         }
                     }
