@@ -147,7 +147,6 @@ fun CalendarContent(
                     verticalAlignment = Alignment.CenterVertically,
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(paddingMedium)
                 ) {
                     IconButton(
                         onClick = {

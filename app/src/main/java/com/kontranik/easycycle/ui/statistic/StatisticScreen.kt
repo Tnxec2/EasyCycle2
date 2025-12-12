@@ -43,8 +43,8 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.kontranik.easycycle.AppViewModelProvider
 import com.kontranik.easycycle.R
 import com.kontranik.easycycle.constants.DefaultSettings
+import com.kontranik.easycycle.database.Cycle
 import com.kontranik.easycycle.model.CDay
-import com.kontranik.easycycle.model.LastCycle
 import com.kontranik.easycycle.model.StatisticItem
 import com.kontranik.easycycle.ui.appbar.AppBar
 import com.kontranik.easycycle.ui.appbar.AppBarAction
@@ -90,7 +90,7 @@ fun StatisticScreen(
 fun StatisticScreenContent(
     averageLength: Int?,
     statisticList: List<StatisticItem>,
-    onDelete: (cycle: LastCycle) -> Unit = {_ -> },
+    onDelete: (cycle: Cycle) -> Unit = {_ -> },
     onImportFromFile: (uri: Uri) -> Unit = { _ ->},
 ) {
     var showHelpDialog by rememberSaveable() {
@@ -202,14 +202,14 @@ private fun StatisticScreenContentPreviewWithList() {
         StatisticItem(
             year = "2023",
             items = mutableListOf(
-                LastCycle(
+                Cycle(
                     id = 1,
                     year = 2023,
                     month = 1,
                     cycleStart = java.util.Date(),
                     lengthOfLastCycle = 28
                 ),
-                LastCycle(
+                Cycle(
                     id = 2,
                     year = 2023,
                     month = 1,

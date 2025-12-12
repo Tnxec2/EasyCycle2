@@ -4,7 +4,6 @@ import android.content.Context
 import com.kontranik.easycycle.database.Cycle
 import com.kontranik.easycycle.model.CDay
 
-import com.kontranik.easycycle.model.LastCycle
 import com.kontranik.easycycle.model.Phase
 import com.kontranik.easycycle.storage.SettingsService
 import java.util.*

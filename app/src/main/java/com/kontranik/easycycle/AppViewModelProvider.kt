@@ -28,14 +28,6 @@ object AppViewModelProvider {
             )
         }
 
-
-        initializer {
-            MainViewModel(
-                application().applicationContext,
-                application().container.cycleRepository
-            )
-        }
-
         initializer {
             SettingsViewModel(
                 application().applicationContext,

@@ -23,7 +23,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import com.kontranik.easycycle.database.Cycle
-import com.kontranik.easycycle.model.LastCycle
 import com.kontranik.easycycle.model.StatisticItem
 import com.kontranik.easycycle.ui.calendar.CalendarViewModel
 import com.kontranik.easycycle.ui.shared.ConfirmDialog
@@ -36,7 +35,7 @@ import java.util.Date
 @Composable
 fun StatisticContentItem(
     statisticItem: StatisticItem,
-    onDelete: (cycle: LastCycle) -> Unit = {_ -> },
+    onDelete: (cycle: Cycle) -> Unit = {_ -> },
     modifier: Modifier = Modifier,
     expanded: Boolean = false,
 ) {
@@ -44,7 +43,7 @@ fun StatisticContentItem(
     var countClicks by rememberSaveable { mutableStateOf(0) }
 
     var deleteItem  by rememberSaveable() {
-        mutableStateOf<LastCycle?>(null)
+        mutableStateOf<Cycle?>(null)
     }
     var showDeleteDialog  by rememberSaveable() {
         mutableStateOf(false)
@@ -149,14 +148,14 @@ private fun StatisticContentItemPreview() {
                     statisticItem = StatisticItem(
                         year = "2023",
                         items = mutableListOf(
-                            LastCycle(
+                            Cycle(
                                 id = 1,
                                 year = 2023,
                                 month = 1,
                                 cycleStart = java.util.Date(),
                                 lengthOfLastCycle = 28
                             ),
-                            LastCycle(
+                            Cycle(
                                 id = 2,
                                 year = 2023,
                                 month = 2,

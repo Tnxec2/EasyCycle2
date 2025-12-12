@@ -2,7 +2,6 @@ package com.kontranik.easycycle.database
 
 import android.util.Log
 import com.kontranik.easycycle.constants.DefaultSettings
-import com.kontranik.easycycle.model.LastCycle
 import com.kontranik.easycycle.model.StatisticItem
 import kotlinx.coroutines.flow.Flow
 import java.util.*
@@ -11,31 +10,34 @@ import kotlin.collections.HashMap
 class CycleRepository(private val cycleDao: CycleDao) {
 
     fun getArchivList(yearsToLoad: Int): List<StatisticItem> {
-        Log.d("CycleRepository", "getArchivList")
-        val years: HashMap<Int, MutableList<LastCycle>> = hashMapOf()
+        Log.d("CycleRepository", "getArchivList: $yearsToLoad")
+        val years: HashMap<Int, MutableList<Cycle>> = hashMapOf()
         val calendar = Calendar.getInstance()
         calendar.add(Calendar.YEAR, -yearsToLoad)
         val startYear = calendar.get(Calendar.YEAR)
 
         cycleDao.getAllByYearsAmount(startYear).forEach { cycle ->
-            val lastCycle = cycle.toLastCycle()
-            var year = lastCycle.year
-            calendar.time = lastCycle.cycleStart
+            var year = cycle.year
+            calendar.time = cycle.cycleStart
             if ( year == null) year = calendar.get(Calendar.YEAR)
+            Log.d("CycleRepository", "year: $year")
             if ( !years.containsKey(year)) {
                 years[year] = mutableListOf()
             }
-            years[year]!!.add(lastCycle)
+            years[year]!!.add(cycle)
         }
+        Log.d("CycleRepository", "getArchivList: ${years.size}")
         val result: MutableList<StatisticItem> = mutableListOf()
         years.keys.sortedDescending().forEach { key ->
             if ( years[key] != null) {
-                var averageLengthSum = 0
-                years[key]!!.forEach {
-                    averageLengthSum += it.lengthOfLastCycle
+                val averageLengthSum = years[key]!!.sumOf {
+                    it.lengthOfLastCycle
                 }
-                result.add( StatisticItem(key.toString(), years[key]!!,
-                    (averageLengthSum / years[key]!!.size)
+                result.add(
+                    StatisticItem(
+                        year = key.toString(),
+                        items =years[key]!!,
+                        averageCycleLength = (averageLengthSum / years[key]!!.size)
                 ))
             }
         }
@@ -50,8 +52,8 @@ class CycleRepository(private val cycleDao: CycleDao) {
     }
 
 
-    fun getLastOne(): LastCycle? {
-        return cycleDao.getLast()?.toLastCycle()
+    fun getLastOne(): Cycle? {
+        return cycleDao.getLast()
     }
 
     fun getLastOneAsFlow(): Flow<Cycle?> {
@@ -61,9 +63,12 @@ class CycleRepository(private val cycleDao: CycleDao) {
     fun add(cycle: Cycle) {
         Log.d("CycleRepository", "add")
 
-        Calendar.getInstance().time = cycle.cycleStart
-        cycle.year = Calendar.getInstance().get(Calendar.YEAR)
-        cycle.month = Calendar.getInstance().get(Calendar.MONTH)
+        val cal = Calendar.getInstance().apply {
+            time = cycle.cycleStart
+        }
+
+        cycle.year = cal.get(Calendar.YEAR)
+        cycle.month = cal.get(Calendar.MONTH)
 
         val item = cycleDao.getByDate(cycle.cycleStart)
         if (item == null) {
@@ -91,24 +96,4 @@ class CycleRepository(private val cycleDao: CycleDao) {
             add(it)
         }
     }
-}
-
-fun LastCycle.toCycle(): Cycle {
-    return Cycle(
-        id = this.id,
-        year = this.year,
-        month = this.month,
-        cycleStart = this.cycleStart,
-        lengthOfLastCycle = this.lengthOfLastCycle
-    )
-}
-
-fun Cycle.toLastCycle(): LastCycle {
-    return LastCycle(
-        id = this.id,
-        year = this.year,
-        month = this.month,
-        cycleStart = this.cycleStart,
-        lengthOfLastCycle = this.lengthOfLastCycle
-    )
 }

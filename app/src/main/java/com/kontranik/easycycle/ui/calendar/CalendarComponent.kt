@@ -16,6 +16,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import com.kontranik.easycycle.ui.theme.EasyCycleTheme
 import com.kontranik.easycycle.ui.theme.paddingSmall
 import java.util.Date
@@ -57,7 +58,7 @@ fun CalendarComponent(
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.Center,
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth().padding(bottom = 1.dp)
             ) {
                 row.forEachIndexed { cell, day ->
                     CalendarDayBox(
