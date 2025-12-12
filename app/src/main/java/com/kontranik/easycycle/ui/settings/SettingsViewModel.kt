@@ -14,6 +14,17 @@ class SettingsViewModel(
     private val context: Context
 ) : ViewModel() {
 
+    private val _settingsState = MutableStateFlow(Settings())
+    val settingsState: StateFlow<Settings> = _settingsState
+
+    init {
+        viewModelScope.launch {
+            SettingsService.loadSettings(context).let {
+                _settingsState.value = it
+            }
+        }
+    }
+
     fun changeShowOnStart(showOnStartId: Int) {
         viewModelScope.launch {
             val newSettings = _settingsState.value.copy(
@@ -53,16 +64,6 @@ class SettingsViewModel(
         }
     }
 
-    private val _settingsState = MutableStateFlow(Settings())
-    val settingsState: StateFlow<Settings> = _settingsState
-
-    init {
-        viewModelScope.launch {
-            SettingsService.loadSettings(context).let {
-                _settingsState.value = it
-            }
-        }
-    }
 
     companion object {
         val drawerNavigationIds = DrawerParams.drawerButtons.map { param ->
