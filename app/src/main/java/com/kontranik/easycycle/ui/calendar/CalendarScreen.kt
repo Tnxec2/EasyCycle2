@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
@@ -65,29 +66,11 @@ import com.kontranik.easycycle.ui.shared.DatePickerModal
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun CalendarScreen(
-    navigateBack: () -> Unit,
-    settingsViewModel: SettingsViewModel = viewModel(factory = AppViewModelProvider.Factory),
-    cycleViewModel: CycleViewModel = viewModel(factory = AppViewModelProvider.Factory),
     calendarViewModel: CalendarViewModel = viewModel(factory = AppViewModelProvider.Factory),
 ) {
-    val coroutineScope = rememberCoroutineScope()
-
     val matrix: List<List<CalendarDay>> by calendarViewModel.matrix.collectAsState(initial = emptyList())
 
     val activeCalendarDay by calendarViewModel.activeCalendarDay.collectAsState()
-
-    val context = LocalContext.current
-
-    val cal = Calendar.getInstance()
-
-//    val datePickerDialog = DatePickerDialog(
-//        context,
-//        { _, selectedYear, selectedMonth, selectedDay ->
-//            val newCalendar = Calendar.getInstance()
-//            newCalendar.set(selectedYear, selectedMonth, selectedDay)
-//            calendarViewModel.setActiveDate(newCalendar.time)
-//        }, cal.get(Calendar.YEAR), cal.get(Calendar.MONTH), cal.get(Calendar.DAY_OF_MONTH)
-//    )
 
 
 
@@ -246,7 +229,7 @@ fun CalendarContent(
                     ) {
                         Box(
                             modifier = Modifier
-                                .clip(RoundedCornerShape(percent = 50))
+                                .clip(CircleShape)
                                 .background(
                                     color = activeDate.mark?.color?.let {
                                         Color(it.toColorInt())
