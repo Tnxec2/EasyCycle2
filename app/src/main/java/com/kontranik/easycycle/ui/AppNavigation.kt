@@ -2,17 +2,11 @@ package com.kontranik.easycycle.ui
 
 import android.os.Build
 import androidx.annotation.RequiresApi
-import androidx.compose.material3.DrawerState
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
-import com.kontranik.easycycle.model.Settings
-import com.kontranik.easycycle.ui.DrawerParams.drawerButtons
 import com.kontranik.easycycle.ui.calendar.CalendarScreen
 import com.kontranik.easycycle.ui.home.HomeScreen
 import com.kontranik.easycycle.ui.phases.PhasesScreen
@@ -28,8 +22,6 @@ fun NavGraphBuilder.mainGraph(
     navController: NavHostController,
     settingsViewModel: SettingsViewModel,
 ) {
-
-
 
     navigation(
         startDestination = start,
@@ -51,9 +43,6 @@ fun NavGraphBuilder.mainGraph(
             route = Screen.Calendar.route,
         ) {
             CalendarScreen(
-                navigateBack = {
-                    navController.popBackStack()
-                },
             )
         }
 
