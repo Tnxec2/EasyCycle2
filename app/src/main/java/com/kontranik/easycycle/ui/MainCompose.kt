@@ -1,7 +1,9 @@
 package com.kontranik.easycycle.ui
 
+import android.app.Activity
 import android.os.Build
 import android.util.Log
+import androidx.activity.compose.BackHandler
 import androidx.annotation.RequiresApi
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ListAlt
@@ -16,6 +18,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -44,6 +47,18 @@ fun MainCompose(
     navController: NavHostController = rememberNavController(),
 ) {
     val settingsViewModel: SettingsViewModel = viewModel(factory = AppViewModelProvider.Factory)
+
+    // add BackPressHandler
+    val activity = (LocalContext.current as? Activity)
+
+    BackHandler(onBack = {
+            if (navController.previousBackStackEntry != null) {
+                navController.navigateUp()
+            } else {
+                activity?.finish()
+            }
+        }
+    )
 
     CompositionLocalProvider() {
         EasyCycleTheme()
