@@ -1,35 +1,23 @@
 package com.kontranik.easycycle.ui.calendar
 
 import android.app.Application
-import android.app.DatePickerDialog
-import android.content.Context
-import android.os.Build
 import android.util.Log
-import androidx.annotation.RequiresApi
-import androidx.compose.runtime.collectAsState
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
-import com.kontranik.easycycle.R
 import com.kontranik.easycycle.database.Cycle
 import com.kontranik.easycycle.database.CycleRepository
 import com.kontranik.easycycle.helper.PhasesHelper
 import com.kontranik.easycycle.helper.TimeHelper
 import com.kontranik.easycycle.model.Note
 import com.kontranik.easycycle.ui.calendar.model.MarkedDate
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.combineTransform
-import kotlinx.coroutines.flow.last
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
-import java.time.ZoneId
-import java.time.format.DateTimeFormatter
 import java.util.Calendar
 import java.util.Calendar.SUNDAY
 import java.util.Date
@@ -154,7 +142,10 @@ class CalendarViewModel(
             var dayCycle: Int = TimeHelper.getDifferenceInDays(workCalendar.time, lastCycleStart) + 1
             val markedData = MarkedDate()
             val key: String = sdfISO.format(workCalendar.time)
+            var prevColor: String? = null
             var color: String? = null
+            var start: Boolean = false
+            var end: Boolean = false
             if (dayCycle > 0) {
                 if (dayCycle > averageLength) {
                     dayCycle = 1
@@ -166,20 +157,32 @@ class CalendarViewModel(
                     day = dayCycle,
                     notes = mutableListOf())
 
-                dayPhases.forEach{ 
-                    tempNotes[key]!!.notes.add(it.desc)
+                dayPhases.forEachIndexed{ index, dayPhase ->
+                    tempNotes[key]!!.notes.add(dayPhase.desc)
 
-                    val tempColor = if (repeated) it.colorP  else it.color
+                    val tempColor = if (repeated) dayPhase.colorP  else dayPhase.color
                     if (tempColor != null) {
-                        if ( it.markwholephase != null && it.markwholephase == true ) {
-                            if ( dayCycle >= it.from && (it.to == null || dayCycle <= it.to!!)) color = tempColor
-                        } else if (dayCycle == it.from.toInt()) color = tempColor
+                        if (dayPhase.markwholephase) {
+                            if ( dayCycle >= dayPhase.from && (dayPhase.to == null || dayCycle <= dayPhase.to!!)) {
+                                prevColor = color
+                                color = tempColor
+                            }
+                        } else if (dayCycle == dayPhase.from.toInt()) {
+                            prevColor = color
+                            color = tempColor
+                        }
+                    }
+                    if (color != null) {
+                        start = dayCycle == dayPhase.from.toInt()
+                        end =  (dayCycle == dayPhase.to?.toInt() || dayPhase.markwholephase.not())
                     }
                 }
             }
             if ( color != null ) {
                 markedData.marked = true
                 markedData.color = color
+                markedData.start = start
+                markedData.end = end
             }
             // if (markedData.marked) tempMarkDate[key] = markedData
             markedData.day = dayCycle
@@ -189,6 +192,14 @@ class CalendarViewModel(
 
         return matrix.map { row -> row.map { cell ->
             val f = sdfISO.format(cell.date)
+            val prev = sdfISO.format(Calendar.getInstance().apply {
+                time = cell.date
+                add(Calendar.DAY_OF_MONTH, -1)
+            }.time)
+            val next = sdfISO.format(Calendar.getInstance().apply {
+                time = cell.date
+                add(Calendar.DAY_OF_MONTH, 1)
+            }.time)
             if (tempMarkDate.containsKey(f)) {
                 cell.copy(
                     cycleDay = tempMarkDate[f]?.day,
@@ -198,14 +209,15 @@ class CalendarViewModel(
                             || TimeHelper.isGreat(activeDate, Date())  ),
                     mark = Mark(
                         color = tempMarkDate[f]?.color,
-                        start = tempMarkDate[f]?.start ?: false,
-                        end = tempMarkDate[f]?.end ?: false,
+                        start = tempMarkDate[f]?.start == true && (tempMarkDate[prev]?.marked != true || tempMarkDate[prev]?.end == true),
+                        end = tempMarkDate[f]?.end == true && (tempMarkDate[next]?.marked != true || tempMarkDate[next]?.start == true),
                         note = tempNotes[f]
                 ))
             } else {
                 cell
             }
         } }
+
     }
 
 

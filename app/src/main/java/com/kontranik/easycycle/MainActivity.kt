@@ -17,6 +17,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteScaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -28,6 +29,8 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewScreenSizes
+import com.kontranik.easycycle.model.Settings
+import com.kontranik.easycycle.storage.SettingsService
 import com.kontranik.easycycle.ui.DrawerParams.drawerButtons
 import com.kontranik.easycycle.ui.MainCompose
 import com.kontranik.easycycle.ui.theme.EasyCycleTheme
@@ -37,9 +40,13 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         // enableEdgeToEdge()
+
+        val showOnStart = SettingsService.loadSettings(this).showOnStart
+        val start = drawerButtons[showOnStart].drawerOption
+
         setContent {
             EasyCycleTheme {
-                MainCompose()
+                MainCompose(start)
             }
         }
     }

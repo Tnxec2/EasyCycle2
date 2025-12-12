@@ -4,7 +4,6 @@ import android.util.Log
 import com.kontranik.easycycle.constants.DefaultSettings
 import com.kontranik.easycycle.model.LastCycle
 import com.kontranik.easycycle.model.StatisticItem
-import com.kontranik.easycycle.ui.calendar.Calendar
 import kotlinx.coroutines.flow.Flow
 import java.util.*
 import kotlin.collections.HashMap

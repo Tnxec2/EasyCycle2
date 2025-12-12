@@ -12,7 +12,9 @@ import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.compositionLocalOf
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
@@ -20,6 +22,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
 import com.kontranik.easycycle.AppViewModelProvider
 import com.kontranik.easycycle.R
+import com.kontranik.easycycle.model.Settings
 import com.kontranik.easycycle.model.navigation_calendar
 import com.kontranik.easycycle.model.navigation_info
 import com.kontranik.easycycle.model.navigation_phases
@@ -37,15 +40,10 @@ val LocalTheme = compositionLocalOf { DarkTheme() }
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun MainCompose(
+    start: Screen = Screen.Home,
     navController: NavHostController = rememberNavController(),
 ) {
-    val scope = rememberCoroutineScope()
-
     val settingsViewModel: SettingsViewModel = viewModel(factory = AppViewModelProvider.Factory)
-
-    LaunchedEffect(Unit) {
-        // settingsViewModel.settingsState
-    }
 
     CompositionLocalProvider() {
         EasyCycleTheme()
@@ -53,7 +51,7 @@ fun MainCompose(
             Surface {
                 AppNavigationScaffold(
                     menuItems = drawerButtons,
-                    defaultPick = Screen.Home,
+                    defaultPick = start,
                     showLabel = false,
                     onClick = { onUserPickedOption ->
                         when (onUserPickedOption) {
@@ -84,6 +82,7 @@ fun MainCompose(
                         startDestination = NavRoutes.MainRoute.name
                     ) {
                         mainGraph(
+                            start.route,
                             navController,
                             settingsViewModel
                         )
