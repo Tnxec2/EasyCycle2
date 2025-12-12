@@ -54,14 +54,12 @@ fun CalendarComponent(
         }
 
         matrix.forEachIndexed { rowIndex, row ->
-            Log.d("CalendarComponent", "row: $rowIndex")
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.Center,
                 modifier = Modifier.fillMaxWidth()
             ) {
                 row.forEachIndexed { cell, day ->
-                    Log.d("CalendarComponent", "cell: $cell, day: ${day.mark?.start} ${day.mark?.end} ${day.mark?.color}")
                     CalendarDayBox(
                         day,
                         modifier = Modifier.weight(1f),

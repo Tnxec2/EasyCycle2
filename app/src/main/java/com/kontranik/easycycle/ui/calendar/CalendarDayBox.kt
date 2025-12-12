@@ -1,6 +1,7 @@
 package com.kontranik.easycycle.ui.calendar
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -19,6 +20,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import androidx.core.graphics.toColorInt
 import com.kontranik.easycycle.helper.getTextColorForBackground
 import com.kontranik.easycycle.model.Note
@@ -51,9 +53,15 @@ fun CalendarDayBox(
         color = color.copy(alpha = 0.5f)
 
     val corner = CornerSize(50)
+
+    val modifierBordered = if (day.active)
+        modifier.border(
+            2.dp, MaterialTheme.colorScheme.primary,
+            shape = CircleShape
+        ) else modifier
     Box(
         contentAlignment = Alignment.Center,
-        modifier = modifier
+        modifier = modifierBordered
             .background(bg, shape = RoundedCornerShape(
                 topStart = if (day.mark?.start == true) corner else CornerSize(0),
                 topEnd = if (day.mark?.end == true) corner else CornerSize(0),
@@ -63,15 +71,13 @@ fun CalendarDayBox(
             .clickable {
                 onClick(day.date)
             }
+
     ) {
         Text(
             text = day.date.date.toString(),
             textAlign = TextAlign.Center,
             fontWeight = if (day.active) FontWeight.Bold else FontWeight.Normal,
-            style = if (day.active)
-                MaterialTheme.typography.bodyMedium
-            else
-                MaterialTheme.typography.bodySmall,
+            style = MaterialTheme.typography.bodyMedium,
             color = color,
             modifier = Modifier
                 .padding(paddingSmall)
@@ -100,7 +106,8 @@ private fun CalendarDayBoxPreview() {
     val dayBetween = CalendarDay(
         date = Date(),
         cycleDay = 5,
-        mark = mark
+        mark = mark,
+        active = true
     )
     val dayStart = CalendarDay(
         date = Date(),
