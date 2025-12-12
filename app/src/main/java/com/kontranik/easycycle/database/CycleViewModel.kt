@@ -1,15 +1,11 @@
 package com.kontranik.easycycle.database
 
 import android.content.Context
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.kontranik.easycycle.helper.PhasesHelper
 import com.kontranik.easycycle.model.CDay
-import com.kontranik.easycycle.model.StatisticItem
 import com.kontranik.easycycle.storage.SettingsService
-import com.kontranik.easycycle.ui.calendar.CalendarDay
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.transform
 import kotlinx.coroutines.launch
@@ -31,13 +27,12 @@ class CycleViewModel(
         }
     }
 
-
     fun loadCycleDays(lastCycle: Cycle?): List<CDay> {
-        val settings = SettingsService.loadSettings(context)
+        val daysOnHome = SettingsService.loadSettings(context).daysOnHome
         return if ( lastCycle != null) {
             PhasesHelper.getDaysInfo(
                 context,
-                settings.daysOnHome,
+                daysOnHome,
                 lastCycle
             )
         } else {
@@ -48,12 +43,6 @@ class CycleViewModel(
     fun addCycle(cycle: Cycle) {
         viewModelScope.launch(Dispatchers.IO) {
             repository.add(cycle)
-        }
-    }
-
-    fun deleteCycleById(id: Long) {
-        viewModelScope.launch(Dispatchers.IO) {
-            repository.deleteById(id)
         }
     }
 }

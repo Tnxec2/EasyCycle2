@@ -1,5 +1,6 @@
 package com.kontranik.easycycle.ui.statistic
 
+import android.net.Uri
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.Box
@@ -12,9 +13,13 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Help
+import androidx.compose.material.icons.filled.Download
 import androidx.compose.material.icons.filled.Help
 import androidx.compose.material.icons.filled.ImportExport
+import androidx.compose.material.icons.filled.InsertInvitation
+import androidx.compose.material.icons.filled.MoveToInbox
 import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material.icons.filled.SystemUpdateAlt
 import androidx.compose.material3.Card
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
@@ -47,6 +52,8 @@ import com.kontranik.easycycle.ui.shared.CustomDialog
 import com.kontranik.easycycle.ui.theme.EasyCycleTheme
 import com.kontranik.easycycle.ui.theme.paddingMedium
 import com.kontranik.easycycle.ui.theme.paddingSmall
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.launch
 
 
 @RequiresApi(Build.VERSION_CODES.O)
@@ -67,7 +74,14 @@ fun StatisticScreen(
         averageLength = averageLength,
         statisticList = statisticList,
         onDelete = { cycle ->
-            statisticViewModel.deleteCycleById(cycle.id)
+            coroutineScope.launch {
+                statisticViewModel.deleteCycleById(cycle.id)
+            }
+        },
+        onImportFromFile = {uri ->
+            coroutineScope.launch {
+                statisticViewModel.importStatisticFromFile(uri)
+            }
         }
     )
 }
@@ -77,9 +91,13 @@ fun StatisticScreenContent(
     averageLength: Int?,
     statisticList: List<StatisticItem>,
     onDelete: (cycle: LastCycle) -> Unit = {_ -> },
-    onImportFromFile: () -> Unit = {},
+    onImportFromFile: (uri: Uri) -> Unit = { _ ->},
 ) {
     var showHelpDialog by rememberSaveable() {
+        mutableStateOf(false)
+    }
+
+    var showImportDialog by rememberSaveable() {
         mutableStateOf(false)
     }
 
@@ -89,9 +107,9 @@ fun StatisticScreenContent(
                 titleRes = R.string.title_statistic,
                 appBarActions = listOf{
                     AppBarAction(appBarAction =  AppBarAction(
-                        vector = Icons.Default.ImportExport,
+                        vector = Icons.Default.Download,
                         description = R.string.import_csv_statistic,
-                        onClick = { onImportFromFile() }
+                        onClick = { showImportDialog = true }
                     ))
                     AppBarAction(appBarAction =  AppBarAction(
                         vector = Icons.AutoMirrored.Filled.Help,
@@ -161,6 +179,16 @@ fun StatisticScreenContent(
                         style = MaterialTheme.typography.bodyLarge
                     )
                 }
+            }
+
+            if (showImportDialog) {
+                StatisticImportDialog(
+                    onImport = {
+                        onImportFromFile(it)
+                        showImportDialog = false
+                    },
+                    onDismiss = { showImportDialog = false }
+                )
             }
         }
     }

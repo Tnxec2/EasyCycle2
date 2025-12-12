@@ -86,6 +86,12 @@ class CycleRepository(private val cycleDao: CycleDao) {
             cycleDao.delete(cycleToDelete)
         }
     }
+
+    fun addAll(cycles: MutableList<Cycle>) {
+        cycles.forEach {
+            add(it)
+        }
+    }
 }
 
 fun LastCycle.toCycle(): Cycle {
