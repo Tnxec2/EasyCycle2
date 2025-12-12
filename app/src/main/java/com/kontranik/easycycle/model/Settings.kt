@@ -2,22 +2,27 @@ package com.kontranik.easycycle.model
 
 import android.os.Parcel
 import android.os.Parcelable
-import com.kontranik.easycycle.R
 
-class Settings(
-    var showOnStart: String = "HOME",
+const val navigation_info = 0
+const val navigation_calendar = 1
+const val navigation_statistic = 2
+const val navigation_phases = 3
+
+
+data class Settings(
+    var showOnStart: Int = navigation_info,
     var daysOnHome: Int = 5,
     var yearsOnStatistic: Int = 3
 ): Parcelable {
     constructor(parcel: Parcel) : this(
-        parcel.readString() ?: "HOME",
+        parcel.readInt(),
         parcel.readInt(),
         parcel.readInt()
     ) {
     }
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {
-        parcel.writeString(showOnStart)
+        parcel.writeInt(showOnStart)
         parcel.writeInt(daysOnHome)
         parcel.writeInt(yearsOnStatistic)
     }
@@ -35,4 +40,26 @@ class Settings(
             return arrayOfNulls(size)
         }
     }
+}
+
+data class SettingsUiState (
+    var showOnStart: Int,
+    var daysOnHome: String,
+    var yearsOnStatistic: String
+)
+
+fun Settings.toUiState() : SettingsUiState {
+    return SettingsUiState(
+        showOnStart = this.showOnStart,
+        daysOnHome = this.daysOnHome.toString(),
+        yearsOnStatistic = this.yearsOnStatistic.toString()
+    )
+}
+
+fun SettingsUiState.toSettings(): Settings {
+    return Settings(
+        showOnStart = this.showOnStart,
+        daysOnHome = this.daysOnHome.toInt(),
+        yearsOnStatistic = this.yearsOnStatistic.toInt()
+    )
 }

@@ -15,18 +15,19 @@ class SettingsService {
 
         fun saveSettings(settings: Settings, context: Context) {
             val sharedPreferences: SharedPreferences =
-                context.getSharedPreferences(preferenceFileName, 0)
-            val sharedPreferencesEditor = sharedPreferences.edit()
-            val serializedObject = gson.toJson(settings)
-            sharedPreferencesEditor.putString(APP_SETTINGS, serializedObject)
-            sharedPreferencesEditor.apply()
+                context.getSharedPreferences(PREFERENCES_FILE_NAME, 0)
+            sharedPreferences.edit {
+                val serializedObject = gson.toJson(settings)
+                putString(APP_SETTINGS, serializedObject)
+                apply()
+            }
         }
 
-        fun loadSettings(context: Context): Settings? {
+        fun loadSettings(context: Context): Settings {
             val sharedPreferences: SharedPreferences =
-                context.getSharedPreferences(preferenceFileName, 0)
+                context.getSharedPreferences(PREFERENCES_FILE_NAME, 0)
             val settings = sharedPreferences.getString(APP_SETTINGS, null)
-            return gson.fromJson(settings, Settings::class.java)
+            return gson.fromJson(settings, Settings::class.java) ?: Settings()
         }
 
         fun saveCustomPhase(context: Context, phase: Phase): List<Phase> {
@@ -60,7 +61,7 @@ class SettingsService {
 
         fun saveCustomPhases(context: Context, phases: List<Phase>) {
             val sharedPreferences: SharedPreferences =
-                context.getSharedPreferences(preferenceFileName, 0)
+                context.getSharedPreferences(PREFERENCES_FILE_NAME, 0)
             sharedPreferences.edit {
                 val resultSet = mutableSetOf<String>()
                 phases.forEach {
@@ -76,7 +77,7 @@ class SettingsService {
 
         fun loadCustomPhases(context: Context): List<Phase> {
             val sharedPreferences: SharedPreferences =
-                context.getSharedPreferences(preferenceFileName, 0)
+                context.getSharedPreferences(PREFERENCES_FILE_NAME, 0)
             val phasesSet = sharedPreferences.getStringSet(CUSTOM_PHASES, null)
             val result = mutableListOf<Phase>()
             return if ( phasesSet != null) {
@@ -92,7 +93,7 @@ class SettingsService {
 
         fun wipeCustomPhases(context: Context): List<Phase> {
             val sharedPreferences: SharedPreferences =
-                context.getSharedPreferences(preferenceFileName, 0)
+                context.getSharedPreferences(PREFERENCES_FILE_NAME, 0)
             sharedPreferences.edit {
                 remove(CUSTOM_PHASES)
                 apply()
@@ -100,7 +101,7 @@ class SettingsService {
             return DefaultPhasesData.ar.sortedBy { it.from }
         }
 
-        private const val preferenceFileName = "EASYCYCLE_PREFS"
+        private const val PREFERENCES_FILE_NAME = "EASYCYCLE_PREFS"
         private const val APP_SETTINGS = "APP_SETTINGS"
         private const val CUSTOM_PHASES = "CUSTOM_PHASES"
     }

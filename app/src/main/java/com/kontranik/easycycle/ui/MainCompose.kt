@@ -20,6 +20,10 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
 import com.kontranik.easycycle.AppViewModelProvider
 import com.kontranik.easycycle.R
+import com.kontranik.easycycle.model.navigation_calendar
+import com.kontranik.easycycle.model.navigation_info
+import com.kontranik.easycycle.model.navigation_phases
+import com.kontranik.easycycle.model.navigation_statistic
 import com.kontranik.easycycle.ui.DrawerParams.drawerButtons
 import com.kontranik.easycycle.ui.appdrawer.AppDrawerItemInfo
 import com.kontranik.easycycle.ui.appnavigation.AppNavigationScaffold
@@ -100,25 +104,29 @@ object DrawerParams {
             drawerOption = Screen.Home,
             descriptionId = R.string.title_home,
             imageVector = Icons.Default.Home,
-            title = R.string.title_home
+            title = R.string.title_home,
+            navigationId = navigation_info
         ),
         AppDrawerItemInfo(
             drawerOption =  Screen.Calendar,
             descriptionId = R.string.title_calendar,
             imageVector = Icons.Filled.CalendarMonth,
-            title = R.string.title_calendar
+            title = R.string.title_calendar,
+            navigationId = navigation_calendar
         ),
         AppDrawerItemInfo(
             drawerOption =  Screen.Statistic,
             descriptionId = R.string.title_statistic,
             imageVector = Icons.Default.StackedBarChart,
-            title = R.string.title_statistic
+            title = R.string.title_statistic,
+            navigationId = navigation_statistic
         ),
         AppDrawerItemInfo(
             drawerOption =  Screen.Phases,
             descriptionId = R.string.title_phases,
             imageVector = Icons.AutoMirrored.Filled.ListAlt,
-            title = R.string.title_phases
+            title = R.string.title_phases,
+            navigationId = navigation_phases
         ),
     )
 }

@@ -11,5 +11,6 @@ data class AppDrawerItemInfo(
     @StringRes val title: Int,
     @DrawableRes val drawableId: Int? = null,
     val imageVector: ImageVector? = null,
-    @StringRes val descriptionId: Int
+    @StringRes val descriptionId: Int,
+    val navigationId: Int
 )

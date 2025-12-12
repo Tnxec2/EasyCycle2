@@ -30,6 +30,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -39,14 +40,15 @@ import kotlinx.coroutines.launch
 
 
 @Composable
-fun SettingsList(
+fun <T> SettingsList(
     entryTitles: List<String>,
-    entryValues: List<String>,
-    defaultValue: String,
+    entryValues: List<T>,
+    defaultValue: T,
     modifier: Modifier = Modifier,
     defaultValueTitle: String? = null,
-    @DrawableRes icon: Int? = null,
-    onChange: (String) -> Unit,
+    @DrawableRes iconResId: Int? = null,
+    imageVector: ImageVector? = null,
+    onChange: (T) -> Unit,
     showDefaultValue: Boolean,
     show: Boolean = false,
     enabled: Boolean = true,
@@ -61,9 +63,18 @@ fun SettingsList(
             .padding(paddingSmall)
             .clickable { if (enabled) showDropdown = !showDropdown; },
     ) {
-        icon?.let {
-            Icon(painter = painterResource(id = it), contentDescription = title,
+        iconResId?.let {
+            Icon(
+                painter = painterResource(id = it),
+                contentDescription = title,
                 modifier = Modifier.padding(end = paddingSmall))
+        }
+        imageVector?.let {
+            Icon(
+                imageVector = it,
+                contentDescription = title,
+                modifier = Modifier.padding(end = paddingSmall)
+            )
         }
         Box(modifier = Modifier.fillMaxWidth()) {
             Column {
@@ -75,7 +86,7 @@ fun SettingsList(
                 if (showDefaultValue) {
                     val ix = entryValues.indexOf(defaultValue)
                     Text(
-                        text = defaultValueTitle ?: ( if (ix >= 0) entryTitles[ix] else defaultValue),
+                        text = defaultValueTitle ?: ( if (ix >= 0) entryTitles[ix] else defaultValue.toString()),
                         modifier = Modifier
                     )
                 }

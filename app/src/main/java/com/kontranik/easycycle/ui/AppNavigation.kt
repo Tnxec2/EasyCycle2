@@ -76,6 +76,7 @@ fun NavGraphBuilder.mainGraph(
             SettingsScreen(
                 navigateBack = {
                     coroutineScope.launch {
+                        navController.popBackStack()
                     }
                 },
                 settingsViewModel = settingsViewModel

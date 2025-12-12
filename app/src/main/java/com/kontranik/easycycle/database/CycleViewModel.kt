@@ -30,22 +30,12 @@ class CycleViewModel(
 
     val averageLength = repository.getAverageLength()
 
-    private var daysOnHome = DefaultSettings.settings.daysOnHome
     val cDays = lastCycle.transform { lc ->
         emit(loadCycleDays(lc))
     }
 
     init {
-    }
 
-    private fun loadPhases() {
-//        val list = SettingsService.loadCustomPhases(context)
-//
-//        if (list.isNotEmpty())  {
-//            phases.value = list.sortedWith(compareBy({ it.from }, { it.to }))
-//        } else {
-//            phases.value = listOf()
-//        }
     }
 
     fun loadArchivList(yearsToLoad: Int) {
@@ -55,10 +45,11 @@ class CycleViewModel(
     }
 
     fun loadCycleDays(lastCycle: Cycle?): List<CDay> {
+        val settings = SettingsService.loadSettings(context)
         return if ( lastCycle != null) {
             PhasesHelper.getDaysInfo(
                 context,
-                daysOnHome,
+                settings.daysOnHome,
                 lastCycle
             )
         } else {
