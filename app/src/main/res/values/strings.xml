@@ -25,7 +25,18 @@
     <string name="import_csv_statistic">Import CSV Statistic</string>
     <string name="choose_csv_file">Choose a CSV file</string>
     <string name="import_statistic">Import Statistic</string>
-    <string name="import_description">You can import old Statistic from CSV file</string>
+    <string name="import_description">
+    <br>You can import old Statistic from CSV file.\n\n
+Each line has two fields separated by a semicolon or comma.\n\n
+The first field is the date of the cycle start in ISO format: yyyy-MM-dd. The second field is the length of the cycle that ended on that day. \n\n
+Example file:\n\n
+2025-09-27;28\n
+2025-10-26;29\n
+2025-11-25;30\n
+2025-12-23;28\n\n
+Click OK to select the CSV file.
+</br>
+    </string>
     <string name="ok">OK</string>
     <string name="delete_statistic_item">Delete statistic item</string>
     <string name="are_you_sure_to_delete_statistic">Are you sure to delete this item?</string>
