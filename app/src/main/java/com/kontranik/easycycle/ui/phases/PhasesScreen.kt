@@ -76,7 +76,7 @@ fun PhasesContent(
     phases: List<Phase>,
     onWipePhases: () -> Unit = {},
     onSavePhase: (Phase) -> Unit = {},
-    onRemovePhase: (key: Long) -> Unit = {},
+    onRemovePhase: (key: Int) -> Unit = {},
 ) {
     var expandedMenu by rememberSaveable { mutableStateOf(false) }
     var showWipeDialog by rememberSaveable { mutableStateOf(false) }
@@ -91,7 +91,7 @@ fun PhasesContent(
                         vector = Icons.Default.Add,
                         description = R.string.add_new_phase,
                         onClick = { editPhase = Phase(
-                            key = phases.size.toLong(),
+                            key = phases.size,
                             from = 1,
                             desc = "",
                         ) }

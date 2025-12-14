@@ -1,5 +1,6 @@
 package com.kontranik.easycycle.helper
 
+import android.app.Application
 import android.content.Context
 import com.kontranik.easycycle.database.Cycle
 import com.kontranik.easycycle.model.CDay
@@ -55,6 +56,10 @@ class PhasesHelper {
                 )
             }
             return result
+        }
+
+        fun getPhases(context: Context): List<Phase> {
+            return SettingsService.loadCustomPhases(context)
         }
     }
 }

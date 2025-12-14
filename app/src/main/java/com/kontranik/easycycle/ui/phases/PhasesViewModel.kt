@@ -24,7 +24,7 @@ class PhasesViewModel(
         }
     }
 
-    fun onRemovePhase(key: Long) {
+    fun onRemovePhase(key: Int) {
         viewModelScope.launch {
             _phases.value = SettingsService.removeCustomPhase(context, key)
         }

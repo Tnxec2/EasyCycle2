@@ -92,4 +92,5 @@ Click OK to select the CSV file.
     <string name="add_cyc">start new cycle</string>
     <string name="add_cycle">start new cycle</string>
     <string name="back">go back</string>
+    <string name="phase_starts_today_title">Phase start today</string>
 </resources>

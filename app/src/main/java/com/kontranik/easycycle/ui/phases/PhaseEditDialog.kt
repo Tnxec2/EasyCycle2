@@ -49,7 +49,7 @@ import com.kontranik.easycycle.ui.settings.elements.toHexCodeWithAlpha
 import com.kontranik.easycycle.ui.theme.paddingBig
 import com.kontranik.easycycle.ui.theme.paddingSmall
 
-@RequiresApi(Build.VERSION_CODES.O)
+
 @Composable
 fun PhaseEditDialog(
     phase: Phase,

@@ -1,12 +1,13 @@
 package com.kontranik.easycycle.model
 
+import com.google.type.Date
 import java.io.Serializable
 import kotlin.toString
 
-class Phase  (
-    var key: Long,
-    var from: Long,
-    var to: Long? = null,
+data class Phase  (
+    var key: Int,
+    var from: Int,
+    var to: Int? = null,
     var desc: String,
     var color: String? = null,  // color of current cycle
     var colorP: String? = null, // color of followed cycles (future)
@@ -14,7 +15,7 @@ class Phase  (
 ) : Serializable {}
 
 data class PhaseUi  (
-    var key: Long,
+    var key: Int,
     var from: String,
     var to: String,
     var desc: String,
@@ -38,8 +39,8 @@ fun Phase.toUi(): PhaseUi  {
 fun PhaseUi.toPhase(): Phase  {
     return Phase(
         key = key,
-        from = from.toLong(),
-        to = if (to.isNotEmpty()) to.toLong() else null,
+        from = from.toInt(),
+        to = if (to.isNotEmpty()) to.toInt() else null,
         desc = desc,
         color = color,
         colorP = colorP,

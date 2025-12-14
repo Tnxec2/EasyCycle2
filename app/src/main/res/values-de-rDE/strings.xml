@@ -91,4 +91,5 @@ Sie können ihre alte Statistik aus einer CSV-Datei importieren. Dafür tippen S
     <string name="add_cyc">Neuer Zyklus beginnt</string>
     <string name="add_cycle">Neuer Zyklus beginnt</string>
     <string name="back">Zurück</string>
+    <string name="phase_starts_today_title">Phase beginnt heute</string>
 </resources>

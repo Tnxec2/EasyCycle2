@@ -12,29 +12,21 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CalendarMonth
-import androidx.compose.material.icons.filled.ConfirmationNumber
 import androidx.compose.material.icons.filled.Numbers
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.Card
-import androidx.compose.material3.DatePicker
-import androidx.compose.material3.DatePickerDialog
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SelectableDates
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
-import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -46,7 +38,6 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -57,14 +48,10 @@ import com.kontranik.easycycle.R
 import com.kontranik.easycycle.constants.DefaultPhasesData.Companion.ar
 import com.kontranik.easycycle.constants.DefaultSettings.Companion.defaultCycleLength
 import com.kontranik.easycycle.database.Cycle
-import com.kontranik.easycycle.database.CycleViewModel
-import com.kontranik.easycycle.helper.TimeHelper
 import com.kontranik.easycycle.model.CDay
-import com.kontranik.easycycle.model.Phase
 import com.kontranik.easycycle.ui.appbar.AppBar
 import com.kontranik.easycycle.ui.appbar.AppBarAction
 import com.kontranik.easycycle.ui.calendar.CalendarViewModel
-import com.kontranik.easycycle.ui.settings.SettingsViewModel
 import com.kontranik.easycycle.ui.shared.CustomDialog
 import com.kontranik.easycycle.ui.shared.DatePickerModal
 import com.kontranik.easycycle.ui.shared.NumberPicker
@@ -79,26 +66,19 @@ import java.util.Date
 @Composable
 fun HomeScreen(
     navigateSettings: () -> Unit,
-    cycleViewModel: CycleViewModel = viewModel(factory = AppViewModelProvider.Factory),
+    calendarViewModel: CalendarViewModel = viewModel(factory = AppViewModelProvider.Factory),
 ) {
     val coroutineScope = rememberCoroutineScope()
 
-    val lastCycle by cycleViewModel.lastCycle.collectAsState(null)
-    val cDays by cycleViewModel.cDays.collectAsState(emptyList())
+    val lastCycle by calendarViewModel.lastCycle.collectAsState(null)
+    val cDays by calendarViewModel.cDays.collectAsState(emptyList())
 
     HomeContent(
         lastCycle = lastCycle,
         cDays = cDays,
         onOpenSettings = { coroutineScope.launch { navigateSettings() }},
         onSave = { date, length ->
-            cycleViewModel.addCycle(
-                Cycle(
-                    month = date.month,
-                    year = date.year,
-                    cycleStart = date,
-                    lengthOfLastCycle = length
-                )
-            )
+            calendarViewModel.addCycle(date, length)
         }
     )
 }

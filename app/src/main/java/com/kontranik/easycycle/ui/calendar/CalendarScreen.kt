@@ -46,7 +46,6 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.kontranik.easycycle.AppViewModelProvider
 import com.kontranik.easycycle.R
-import com.kontranik.easycycle.database.CycleViewModel
 import com.kontranik.easycycle.ui.appbar.AppBar
 import com.kontranik.easycycle.ui.settings.SettingsViewModel
 import com.kontranik.easycycle.ui.theme.EasyCycleTheme
@@ -63,7 +62,6 @@ import com.kontranik.easycycle.ui.appbar.AppBarAction
 import com.kontranik.easycycle.ui.shared.DatePickerModal
 
 
-@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun CalendarScreen(
     calendarViewModel: CalendarViewModel = viewModel(factory = AppViewModelProvider.Factory),

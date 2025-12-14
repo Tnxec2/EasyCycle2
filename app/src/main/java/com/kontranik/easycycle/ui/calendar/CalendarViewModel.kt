@@ -1,6 +1,9 @@
 package com.kontranik.easycycle.ui.calendar
 
 import android.app.Application
+import android.content.Intent
+import android.os.Build
+import android.provider.Settings
 import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
@@ -8,7 +11,10 @@ import com.kontranik.easycycle.database.Cycle
 import com.kontranik.easycycle.database.CycleRepository
 import com.kontranik.easycycle.helper.PhasesHelper
 import com.kontranik.easycycle.helper.TimeHelper
+import com.kontranik.easycycle.model.CDay
 import com.kontranik.easycycle.model.Note
+import com.kontranik.easycycle.service.AlarmScheduler
+import com.kontranik.easycycle.storage.SettingsService
 import com.kontranik.easycycle.ui.calendar.model.MarkedDate
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
@@ -16,6 +22,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combineTransform
+import kotlinx.coroutines.flow.transform
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.Calendar
@@ -53,6 +60,9 @@ class CalendarViewModel(
 
     val lastCycle = cycleRepository.getLastOneAsFlow()
 
+    val cDays = lastCycle.transform { lc ->
+        emit(loadCycleDays(lc))
+    }
 
     val averageLength = cycleRepository.getAverageLength()
 
@@ -85,6 +95,12 @@ class CalendarViewModel(
     }
 
     val matrix: Flow<List<List<CalendarDay>>> = _matrix
+
+    init {
+        viewModelScope.launch(Dispatchers.IO) {
+            cycleRepository.clearOldStatistic()
+        }
+    }
 
     fun setActiveDate(date: Date) {
         activeDate.value = date
@@ -220,6 +236,18 @@ class CalendarViewModel(
 
     }
 
+    fun loadCycleDays(lastCycle: Cycle?): List<CDay> {
+        val daysOnHome = SettingsService.loadSettings(app).daysOnHome
+        return if ( lastCycle != null) {
+            PhasesHelper.getDaysInfo(
+                app,
+                daysOnHome,
+                lastCycle
+            )
+        } else {
+            emptyList()
+        }
+    }
 
     fun addActiveDateAsCycleStart(time: Date) {
         viewModelScope.launch(Dispatchers.IO) {
@@ -242,7 +270,30 @@ class CalendarViewModel(
                     lengthOfLastCycle = lengthOfLastCycle.toInt()
                 )
             )
+
+            setSheduler(time)
         }
+    }
+
+    fun addCycle(cycleStart: Date, length: Int) {
+        viewModelScope.launch(Dispatchers.IO) {
+            cycleRepository.add(
+                Cycle(
+                    month = cycleStart.month,
+                    year = cycleStart.year,
+                    cycleStart = cycleStart,
+                    lengthOfLastCycle = length
+                )
+            )
+            setSheduler(cycleStart)
+        }
+    }
+
+    private fun setSheduler(time: Date) {
+        val alarmScheduler = AlarmScheduler(app.applicationContext)
+        val allPhases = PhasesHelper.getPhases(app)
+
+        alarmScheduler.schedulePhaseNotifications(time, allPhases)
     }
 
     companion object {

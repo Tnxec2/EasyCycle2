@@ -51,7 +51,7 @@ class SettingsService {
             return phases.sortedBy { it.from }
         }
 
-        fun removeCustomPhase(context: Context, key: Long): List<Phase> {
+        fun removeCustomPhase(context: Context, key: Int): List<Phase> {
             val phases = loadCustomPhases(context).filter {
                 it.key != key
             }

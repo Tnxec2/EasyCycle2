@@ -20,7 +20,6 @@ class CycleRepository(private val cycleDao: CycleDao) {
             var year = cycle.year
             calendar.time = cycle.cycleStart
             if ( year == null) year = calendar.get(Calendar.YEAR)
-            Log.d("CycleRepository", "year: $year")
             if ( !years.containsKey(year)) {
                 years[year] = mutableListOf()
             }
@@ -61,8 +60,6 @@ class CycleRepository(private val cycleDao: CycleDao) {
     }
 
     fun add(cycle: Cycle) {
-        Log.d("CycleRepository", "add")
-
         val cal = Calendar.getInstance().apply {
             time = cycle.cycleStart
         }
@@ -84,7 +81,6 @@ class CycleRepository(private val cycleDao: CycleDao) {
     }
 
     fun deleteById(id: Long) {
-        Log.d("CycleRepository", "deleteById")
         val cycleToDelete = cycleDao.getById(id)
         if (cycleToDelete != null) {
             cycleDao.delete(cycleToDelete)
