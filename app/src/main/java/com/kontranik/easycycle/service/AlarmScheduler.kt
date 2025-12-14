@@ -45,7 +45,6 @@ class AlarmScheduler(private val context: Context) {
                 set(Calendar.SECOND, 0)
             }
 
-            Log.d("AlarmScheduler", "Scheduling phase notification for ${phase.desc} at ${calendar.time}")
             // Nur planen, wenn der Termin in der Zukunft liegt
             if (calendar.timeInMillis > System.currentTimeMillis()) {
                 val desc = if (phase.to != null) "${phase.from} - ${phase.to}. ${phase.desc}"
