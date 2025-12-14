@@ -15,8 +15,9 @@ android {
         applicationId = "com.kontranik.easycycle"
         minSdk = 26
         targetSdk = 36
-        versionCode = 1
-        versionName = "1.0"
+        versionCode = 13
+        versionName = "1.1.13"
+        setProperty("archivesBaseName", rootProject.name + defaultConfig.versionName)
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
