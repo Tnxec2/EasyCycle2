@@ -159,6 +159,9 @@ fun ColorPicker(
                         .padding(bottom = 10.dp)
                         .height(200.dp),
                     controller = controller,
+                    onColorChanged = {
+                        hexColor.value = it.color.toHexCodeWithAlpha()
+                    }
                 )
                 AlphaSlider(
                     modifier = Modifier
