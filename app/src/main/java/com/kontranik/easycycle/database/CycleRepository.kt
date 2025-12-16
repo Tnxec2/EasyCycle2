@@ -30,7 +30,7 @@ class CycleRepository(private val cycleDao: CycleDao) {
         years.keys.sortedDescending().forEach { key ->
             if ( years[key] != null) {
                 val averageLengthSum = years[key]!!.sumOf {
-                    it.lengthOfLastCycle
+                    it.lengthOfLastCycle ?: 0
                 }
                 result.add(
                     StatisticItem(
@@ -61,13 +61,13 @@ class CycleRepository(private val cycleDao: CycleDao) {
 
     fun add(cycle: Cycle) {
         val cal = Calendar.getInstance().apply {
-            time = cycle.cycleStart
+            time = cycle.cycleStart!!
         }
 
         cycle.year = cal.get(Calendar.YEAR)
         cycle.month = cal.get(Calendar.MONTH)
 
-        val item = cycleDao.getByDate(cycle.cycleStart)
+        val item = cycleDao.getByDate(cycle.cycleStart!!)
         if (item == null) {
             cycleDao.insert(cycle)
         } else {

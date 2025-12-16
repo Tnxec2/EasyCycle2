@@ -122,7 +122,7 @@ fun StatisticContentItem(
                                 }
                         ) {
                             Text(
-                                text = CalendarViewModel.formatDateToString(cycle.cycleStart),
+                                text = CalendarViewModel.formatDateToString(cycle.cycleStart!!),
                                 style = MaterialTheme.typography.bodyMedium,
                             )
                             Text(

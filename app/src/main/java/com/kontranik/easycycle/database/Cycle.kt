@@ -4,6 +4,7 @@ import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import androidx.room.TypeConverter
+import com.kontranik.easycycle.ui.calendar.CalendarViewModel.Companion.sdfISO
 import java.util.Date
 
 @Entity(tableName = "cycles_archive")
@@ -19,20 +20,20 @@ data class Cycle(
     var month: Int? = null,
 
     @ColumnInfo(name = "cyclestart")
-    var cycleStart: Date,
+    var cycleStart: Date?,
 
     @ColumnInfo(name = "last_cycle_length")
-    var lengthOfLastCycle: Int
+    var lengthOfLastCycle: Int?
 )
 
 class DateConverter {
     @TypeConverter
-    fun toDate(dateLong: Long?): Date? {
-        return dateLong?.let { Date(it) }
+    fun toDate(dateLong: String?): Date? {
+        return dateLong?.let { sdfISO.parse(it) }
     }
 
     @TypeConverter
-fun fromDate(date: Date?): Long? {
-        return date?.time
+fun fromDate(date: Date?): String? {
+        return date?.let { sdfISO.format(date) }
     }
 }

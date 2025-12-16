@@ -31,7 +31,7 @@ class AlarmScheduler(private val context: Context) {
         Log.d("AlarmScheduler", "Scheduling phase notifications for new cycle starting on $newCycleStartDate, phases: ${phases.size}")
 
         phases.distinctBy { it.key }.forEach { phase ->
-            val notificationId = phase.key
+            val notificationId: Int = phase.key.toInt()
             val calendar = Calendar.getInstance().apply {
                 // Temporär: Alarm in 5 Sekunden auslösen
                 // add(Calendar.SECOND, 5)
@@ -75,7 +75,7 @@ class AlarmScheduler(private val context: Context) {
     // Nützlich, um alte Alarme zu entfernen, wenn ein neuer Zyklus beginnt
     fun cancelAllPhaseNotifications(phases: List<Phase>) {
         phases.forEach { phase ->
-            val notificationId = phase.key
+            val notificationId: Int = phase.key.toInt()
             val intent = Intent(context, NotificationReceiver::class.java)
             val pendingIntent = PendingIntent.getBroadcast(
                 context,

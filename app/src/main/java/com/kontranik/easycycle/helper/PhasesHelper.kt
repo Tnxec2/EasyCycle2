@@ -17,7 +17,7 @@ class PhasesHelper {
 
             val allDays: MutableList<CDay> = mutableListOf()
             for (day in 0 until amount) {
-                val diff = TimeHelper.getDifferenceInDays(dateNow.time, lastCycle.cycleStart)
+                val diff = TimeHelper.getDifferenceInDays(dateNow.time, lastCycle.cycleStart!!)
                 if (diff >= 0) {
                     val cDay = diff + 1
                     val repeated = false

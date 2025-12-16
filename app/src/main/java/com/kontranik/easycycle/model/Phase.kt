@@ -5,7 +5,7 @@ import java.io.Serializable
 import kotlin.toString
 
 data class Phase  (
-    var key: Int,
+    var key: Long,
     var from: Int,
     var to: Int? = null,
     var desc: String,
@@ -15,7 +15,7 @@ data class Phase  (
 ) : Serializable {}
 
 data class PhaseUi  (
-    var key: Int,
+    var key: Long,
     var from: String,
     var to: String,
     var desc: String,

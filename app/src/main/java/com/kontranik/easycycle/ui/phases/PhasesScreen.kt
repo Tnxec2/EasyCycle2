@@ -41,6 +41,7 @@ import com.kontranik.easycycle.ui.theme.EasyCycleTheme
 import com.kontranik.easycycle.ui.theme.paddingMedium
 import com.kontranik.easycycle.ui.theme.paddingSmall
 import kotlinx.coroutines.launch
+import java.util.Date
 
 
 @Composable
@@ -76,7 +77,7 @@ fun PhasesContent(
     phases: List<Phase>,
     onWipePhases: () -> Unit = {},
     onSavePhase: (Phase) -> Unit = {},
-    onRemovePhase: (key: Int) -> Unit = {},
+    onRemovePhase: (key: Long) -> Unit = {},
 ) {
     var expandedMenu by rememberSaveable { mutableStateOf(false) }
     var showWipeDialog by rememberSaveable { mutableStateOf(false) }
@@ -91,7 +92,7 @@ fun PhasesContent(
                         vector = Icons.Default.Add,
                         description = R.string.add_new_phase,
                         onClick = { editPhase = Phase(
-                            key = phases.size,
+                            key = Date().time,
                             from = 1,
                             desc = "",
                         ) }

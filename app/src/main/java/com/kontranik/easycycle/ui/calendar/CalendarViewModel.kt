@@ -155,7 +155,7 @@ class CalendarViewModel(
         var lastCycleStart = lastCycle.cycleStart
         var repeated = false
         while (workCalendar.timeInMillis < maxDateCalendar.timeInMillis) {
-            var dayCycle: Int = TimeHelper.getDifferenceInDays(workCalendar.time, lastCycleStart) + 1
+            var dayCycle: Int = TimeHelper.getDifferenceInDays(workCalendar.time, lastCycleStart!!) + 1
             val markedData = MarkedDate()
             val key: String = sdfISO.format(workCalendar.time)
             var prevColor: String? = null
@@ -219,8 +219,8 @@ class CalendarViewModel(
             if (tempMarkDate.containsKey(f)) {
                 cell.copy(
                     cycleDay = tempMarkDate[f]?.day,
-                    canBeAdded = !( (TimeHelper.isLess(activeDate, lastCycle.cycleStart)
-                            || TimeHelper.isEqual(activeDate, lastCycle.cycleStart)
+                    canBeAdded = !( (TimeHelper.isLess(activeDate, lastCycle.cycleStart!!)
+                            || TimeHelper.isEqual(activeDate, lastCycle.cycleStart!!)
                                 )
                             || TimeHelper.isGreat(activeDate, Date())  ),
                     mark = Mark(
@@ -257,7 +257,7 @@ class CalendarViewModel(
             val lengthOfLastCycle = if ( lastCycle == null ) {
                 0
             } else {
-                (time.time - lastCycle.cycleStart.time) / (1000 * 60 * 60 * 24)
+                (time.time - lastCycle.cycleStart!!.time) / (1000 * 60 * 60 * 24)
             }
 
             Log.d("CalendarViewModel", "addActiveDateAsCycleStart: $lengthOfLastCycle")
