@@ -26,6 +26,7 @@ class DefaultPhasesData {
                 color="#ff69b4",
                 colorP="#ffd2e8",
                 markwholephase = false,
+                notificateStart = true,
             ),
             Phase(
                 key= 2,
@@ -38,6 +39,7 @@ class DefaultPhasesData {
                 from= 10,
                 to= 15,
                 desc= "Tag 10-15: Östrogen-Höhepunkt, gelblicher Schleim als Ausfluss. Östrogen macht Frauen reizbar, aber auch attraktiver. Intensivere Orgasmen, du hast evtl. weniger Hunger.",
+                notificateStart = true,
             ),
             Phase(
                 key= 4,
@@ -47,6 +49,7 @@ class DefaultPhasesData {
                 color= "#d11141",
                 colorP= "#f1b7c6",
                 markwholephase = false,
+                notificateStart = true,
             ),
             Phase(
                 key= 5,
@@ -59,6 +62,7 @@ class DefaultPhasesData {
                 from= 21,
                 to= 23,
                 desc= "Tag 21-23: Stinkig? Ein Vorzeichen von PMS kann ein unangenehmer Körpergeruch sein.",
+                notificateStart = true,
             ),
             Phase(
                 key= 8,
@@ -68,6 +72,7 @@ class DefaultPhasesData {
                 color= "#00ee00",
                 colorP= "#b2f9b2",
                 markwholephase = true,
+                notificateStart = true,
             ),
             Phase(
                 key= 9,
@@ -76,6 +81,7 @@ class DefaultPhasesData {
                 color= "#d11141",
                 colorP= "#f1b7c6",
                 markwholephase = false,
+                notificateStart = true,
             )
         )
     }

@@ -15,8 +15,8 @@ android {
         applicationId = "com.kontranik.easycycle"
         minSdk = 26
         targetSdk = 36
-        versionCode = 13
-        versionName = "1.1.13"
+        versionCode = 15
+        versionName = "1.2.1"
         setProperty("archivesBaseName", rootProject.name + defaultConfig.versionName)
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
@@ -24,7 +24,7 @@ android {
 
     buildTypes {
         release {
-            isMinifyEnabled = false
+            isMinifyEnabled = true
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"

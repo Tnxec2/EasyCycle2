@@ -30,45 +30,72 @@ class AlarmScheduler(private val context: Context) {
 
         Log.d("AlarmScheduler", "Scheduling phase notifications for new cycle starting on $newCycleStartDate, phases: ${phases.size}")
 
-        phases.distinctBy { it.key }.forEach { phase ->
+        phases.filter{ it.notificateStart || it.notificateEveryDay }.distinctBy { it.key }.forEach { phase ->
             val notificationId: Int = phase.key.toInt()
-            val calendar = Calendar.getInstance().apply {
-                // Temporär: Alarm in 5 Sekunden auslösen
-                // add(Calendar.SECOND, 5)
+            val calendar = getCalendarFromPhase(newCycleStartDate, phase)
 
-                time = newCycleStartDate
-                // Tag des Phasenbeginns hinzufügen
-                add(Calendar.DAY_OF_YEAR, phase.from-1)
-                // Alarm z.B. um 9 Uhr morgens auslösen
-                set(Calendar.HOUR_OF_DAY, 9)
-                set(Calendar.MINUTE, 0)
-                set(Calendar.SECOND, 0)
+            var days = phase.to?.let{ to -> if ( phase.notificateEveryDay && to > phase.from ) {
+                to - phase.from
+            } else {
+                1
+            } } ?: 1
+
+            while (days > 0) {
+                setNotification(calendar, phase, notificationId)
+                calendar.add(Calendar.DAY_OF_YEAR, 1)
+                days -= 1
+            }
+        }
+    }
+
+    private fun getCalendarFromPhase(
+        newCycleStartDate: Date,
+        phase: Phase
+    ): Calendar {
+        val calendar = Calendar.getInstance().apply {
+            // Temporär: Alarm in 5 Sekunden auslösen
+            // add(Calendar.SECOND, 5)
+
+            time = newCycleStartDate
+            // Tag des Phasenbeginns hinzufügen
+            add(Calendar.DAY_OF_YEAR, phase.from - 1)
+            // Alarm z.B. um 9 Uhr morgens auslösen
+            set(Calendar.HOUR_OF_DAY, 9)
+            set(Calendar.MINUTE, 0)
+            set(Calendar.SECOND, 0)
+        }
+        return calendar
+    }
+
+    private fun setNotification(
+        calendar: Calendar,
+        phase: Phase,
+        notificationId: Int
+    ) {
+
+        // Nur planen, wenn der Termin in der Zukunft liegt
+        if (calendar.timeInMillis > System.currentTimeMillis()) {
+            val desc = if (phase.to != null) "${phase.from} - ${phase.to}. ${phase.desc}"
+            else "${phase.from}. ${phase.desc}"
+            val intent = Intent(context, NotificationReceiver::class.java).apply {
+                putExtra(NotificationReceiver.EXTRA_PHASE_NAME, desc)
+                putExtra(NotificationReceiver.EXTRA_NOTIFICATION_ID, notificationId)
             }
 
-            // Nur planen, wenn der Termin in der Zukunft liegt
-            if (calendar.timeInMillis > System.currentTimeMillis()) {
-                val desc = if (phase.to != null) "${phase.from} - ${phase.to}. ${phase.desc}"
-                else "${phase.from}. ${phase.desc}"
-                val intent = Intent(context, NotificationReceiver::class.java).apply {
-                    putExtra(NotificationReceiver.EXTRA_PHASE_NAME, desc)
-                    putExtra(NotificationReceiver.EXTRA_NOTIFICATION_ID, notificationId)
-                }
+            val pendingIntent = PendingIntent.getBroadcast(
+                context,
+                notificationId,
+                intent,
+                PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+            )
 
-                val pendingIntent = PendingIntent.getBroadcast(
-                    context,
-                    notificationId,
-                    intent,
-                    PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
-                )
-
-                Log.d("AlarmScheduler", "Scheduled phase notification for $desc at ${calendar.time}")
-                // Alarm planen
-                alarmManager.setExact(
-                    AlarmManager.RTC_WAKEUP,
-                    calendar.timeInMillis,
-                    pendingIntent
-                )
-            }
+            Log.d("AlarmScheduler", "Scheduled phase notification for $desc at ${calendar.time}")
+            // Alarm planen
+            alarmManager.setExact(
+                AlarmManager.RTC_WAKEUP,
+                calendar.timeInMillis,
+                pendingIntent
+            )
         }
     }
 
@@ -88,4 +115,42 @@ class AlarmScheduler(private val context: Context) {
             }
         }
     }
+
+    /**
+     * Listet alle geplanten Alarme, die von dieser App erstellt wurden, im Logcat auf.
+     * Nützlich für Debugging-Zwecke.
+     * @param phases Die Liste aller möglichen Phasen, für die Alarme existieren könnten.
+     */
+    fun logAllScheduledAlarms(phases: List<Phase>) {
+        Log.d("AlarmScheduler", "--- Checking for all scheduled alarms ---")
+        var alarmCount = 0
+
+        val allPossiblePhases = phases.filter { it.notificateStart || it.notificateEveryDay }.distinctBy { it.key }
+
+        allPossiblePhases.forEach { phase ->
+            val notificationId: Int = phase.key.toInt()
+            val intent = Intent(context, NotificationReceiver::class.java)
+
+            // Wir versuchen, den PendingIntent abzurufen, ohne ihn neu zu erstellen
+            val pendingIntent = PendingIntent.getBroadcast(
+                context,
+                notificationId,
+                intent,
+                PendingIntent.FLAG_NO_CREATE or PendingIntent.FLAG_IMMUTABLE
+            )
+
+            // Wenn der pendingIntent nicht null ist, existiert der Alarm
+            if (pendingIntent != null) {
+                Log.i("AlarmScheduler", "Found active alarm (ID: $notificationId) for Phase '${phase.desc}'")
+                alarmCount++
+            }
+        }
+
+        if (alarmCount == 0) {
+            Log.d("AlarmScheduler", "No active alarms found for this app.")
+        } else {
+            Log.d("AlarmScheduler", "--- Found a total of $alarmCount active alarms. ---")
+        }
+    }
+
 }

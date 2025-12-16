@@ -29,6 +29,7 @@ object AppViewModelProvider {
         initializer {
             PhasesViewModel(
                 application().applicationContext,
+                application().container.cycleRepository
             )
         }
 
@@ -48,7 +49,6 @@ object AppViewModelProvider {
 
     }
 }
-
 
 /**
  * Extension function to queries for [EasyCylceApplication] object and returns an instance of

@@ -2,16 +2,22 @@ package com.kontranik.easycycle.storage
 
 import android.content.Context
 import android.content.SharedPreferences
+import android.util.Log
 import com.google.gson.Gson
 import com.kontranik.easycycle.constants.DefaultPhasesData
 import com.kontranik.easycycle.model.Phase
 import com.kontranik.easycycle.model.Settings
 import androidx.core.content.edit
+import com.google.gson.GsonBuilder
+import com.kontranik.easycycle.model.PhaseAdapter
 
 
 class SettingsService {
     companion object {
         private val gson = Gson()
+
+        private var phasesInstance = emptyList<Phase>()
+        private var settingsInstance: Settings? = null
 
         fun saveSettings(settings: Settings, context: Context) {
             val sharedPreferences: SharedPreferences =
@@ -21,34 +27,25 @@ class SettingsService {
                 putString(APP_SETTINGS, serializedObject)
                 apply()
             }
+            settingsInstance = settings
         }
 
         fun loadSettings(context: Context): Settings {
+            if (settingsInstance != null) return settingsInstance!!
+
             val sharedPreferences: SharedPreferences =
                 context.getSharedPreferences(PREFERENCES_FILE_NAME, 0)
             val settings = sharedPreferences.getString(APP_SETTINGS, null)
-            return gson.fromJson(settings, Settings::class.java) ?: Settings()
+            settingsInstance = gson.fromJson(settings, Settings::class.java)
+            return settingsInstance ?: Settings()
         }
 
         fun saveCustomPhase(context: Context, phase: Phase): List<Phase> {
-            val phases = loadCustomPhases(context).toMutableList()
-            var updated = false
-            for( i in phases.indices) {
-                val it = phases[i]
-                if ( it.key == phase.key) {
-                    it.from = phase.from
-                    it.to = phase.to
-                    it.desc = phase.desc
-                    it.color = phase.color
-                    it.colorP = phase.colorP
-                    it.markwholephase = phase.markwholephase
-                    updated = true
-                    break
-                }
-            }
-            if (!updated) phases.add(phase)
-            saveCustomPhases(context, phases.sortedBy { it.from })
-            return phases.sortedBy { it.from }
+            saveCustomPhases(context, loadCustomPhases(context)
+                .filter { it.key != phase.key }
+                .plus(phase)
+                .sortedBy { it.from })
+            return phasesInstance
         }
 
         fun removeCustomPhase(context: Context, key: Long): List<Phase> {
@@ -56,7 +53,7 @@ class SettingsService {
                 it.key != key
             }
             saveCustomPhases(context, phases)
-            return phases
+            return phasesInstance
         }
 
         fun saveCustomPhases(context: Context, phases: List<Phase>) {
@@ -73,22 +70,25 @@ class SettingsService {
                 putStringSet(CUSTOM_PHASES, resultSet)
                 apply()
             }
+            phasesInstance = phases.sortedBy { it.from }
         }
 
         fun loadCustomPhases(context: Context): List<Phase> {
+            if (phasesInstance.isNotEmpty()) return phasesInstance
+
             val sharedPreferences: SharedPreferences =
                 context.getSharedPreferences(PREFERENCES_FILE_NAME, 0)
             val phasesSet = sharedPreferences.getStringSet(CUSTOM_PHASES, null)
-            val result = mutableListOf<Phase>()
-            return if ( phasesSet != null) {
-                phasesSet.forEach {
-                    val phase = gson.fromJson(it, Phase::class.java)
-                    if ( phase != null) result.add(phase)
-                }
-                result.sortedBy { it.from }
-            } else {
-                DefaultPhasesData.ar.sortedBy { it.from }
-            }
+
+            val gsonAdapter = GsonBuilder()
+                .registerTypeAdapter(Phase::class.java, PhaseAdapter())
+                .create()
+            phasesInstance = phasesSet?.mapNotNull { json ->
+                val p = gsonAdapter.fromJson(json, Phase::class.java)
+                return@mapNotNull p
+            }?.sortedBy { it.from }
+                ?: DefaultPhasesData.ar.sortedBy { it.from }
+            return phasesInstance
         }
 
         fun wipeCustomPhases(context: Context): List<Phase> {
@@ -98,7 +98,8 @@ class SettingsService {
                 remove(CUSTOM_PHASES)
                 apply()
             }
-            return DefaultPhasesData.ar.sortedBy { it.from }
+            phasesInstance = DefaultPhasesData.ar.sortedBy { it.from }
+            return phasesInstance
         }
 
         private const val PREFERENCES_FILE_NAME = "EASYCYCLE_PREFS"

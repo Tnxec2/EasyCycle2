@@ -7,10 +7,14 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.BorderColor
+import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material3.Card
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -159,15 +163,55 @@ fun PhaseItem(
                 }
 
                 if (phase.color != null || phase.colorP != null) {
-                    Text(
-                        text = if (phase.markwholephase)  {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier.padding(top = paddingSmall)
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.BorderColor,
+                            contentDescription = null,
+                            Modifier.size(24.dp).padding(end = paddingSmall)
+                        )
+                        Text(
+                            text = if (phase.markwholephase) {
                                 stringResource(R.string.mark_whole_phase)
                             } else {
                                 stringResource(R.string.mark_only_phase_start)
-                        },
-                        style = MaterialTheme.typography.bodyMedium,
-                        modifier = Modifier.padding(top = paddingSmall)
-                    )
+                            },
+                            style = MaterialTheme.typography.bodyMedium,
+                        )
+                    }
+                }
+
+                if (phase.notificateStart) {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Notifications,
+                            contentDescription = null,
+                            Modifier.size(24.dp).padding(end = paddingSmall)
+                        )
+                        Text(
+                            text = "Notification on start",
+                            style = MaterialTheme.typography.bodyMedium
+                        )
+                    }
+                }
+                if (phase.notificateEveryDay) {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Notifications,
+                            contentDescription = null,
+                            Modifier.size(24.dp).padding(end = paddingSmall)
+                        )
+                        Text(
+                            text = "Notification every day",
+                            style = MaterialTheme.typography.bodyMedium
+                        )
+                    }
                 }
             }
         }
@@ -198,7 +242,7 @@ private fun CDayItemPreview() {
                 Modifier.padding(paddingMedium)
             ) {
                 PhaseItem(
-                    phase = ar[0]
+                    phase = ar[0].copy(notificateEveryDay = true)
                 )
             }
         }

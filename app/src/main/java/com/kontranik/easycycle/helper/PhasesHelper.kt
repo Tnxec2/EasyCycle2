@@ -2,6 +2,7 @@ package com.kontranik.easycycle.helper
 
 import android.app.Application
 import android.content.Context
+import android.util.Log
 import com.kontranik.easycycle.database.Cycle
 import com.kontranik.easycycle.model.CDay
 
@@ -47,15 +48,12 @@ class PhasesHelper {
         }
 
         fun getPhasesByDay(context: Context, day: Int): List<Phase> {
-
-            val result: MutableList<Phase> = mutableListOf()
             val phases = SettingsService.loadCustomPhases(context)
-            phases.forEach {
-                if (day >= it.from && ((it.to != null && day <= it.to!!) || it.to == null)) result.add(
-                    it
-                )
+            return phases.filter { phase ->
+                (phase.to == null && day == phase.from)
+                ||
+                (phase.to != null && day >= phase.from && day <= phase.to!!)
             }
-            return result
         }
 
         fun getPhases(context: Context): List<Phase> {

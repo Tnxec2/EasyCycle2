@@ -92,4 +92,9 @@ Sie können ihre alte Statistik aus einer CSV-Datei importieren. Dafür tippen S
     <string name="add_cycle">Neuer Zyklus beginnt</string>
     <string name="back">Zurück</string>
     <string name="phase_starts_today_title">Phase beginnt heute</string>
+    <string name="title_notification_alert_permission">Benachrichtigungsberechtigung</string>
+    <string name="message_notification_alert_permission">Wenn Sie möchten, dass die App Sie über den Beginn jeder Phase informiert, erteilen Sie in den nächsten Schritten die Berechtigung für Alarme und Benachrichtigungen.</string>
+    <string name="notification_on_start">Benachrichtigung am Start</string>
+    <string name="notification_every_day">Benachrichtigung jeden Tag</string>
+    <string name="selected_color">Ausgewählte Farbe</string>
 </resources>

@@ -47,6 +47,7 @@ import com.kontranik.easycycle.ui.settings.elements.SettingsTextField
 import com.kontranik.easycycle.ui.settings.elements.SettingsTitle
 import com.kontranik.easycycle.ui.settings.elements.toHexCodeWithAlpha
 import com.kontranik.easycycle.ui.theme.paddingBig
+import com.kontranik.easycycle.ui.theme.paddingMedium
 import com.kontranik.easycycle.ui.theme.paddingSmall
 
 
@@ -124,8 +125,9 @@ fun PhaseEditDialog(
                     onColorChanged = { color ->
                         uiState = uiState.copy(color = color.toHexCodeWithAlpha())
                     },
+                    selectNoneButtonText = stringResource(R.string.remove_color),
                     onSelectDefaultColor = {
-                        uiState = uiState.copy(color = phase.color)
+                        uiState = uiState.copy(color = null)
                     },
                 )
                 SettingsColor(
@@ -134,8 +136,9 @@ fun PhaseEditDialog(
                     onColorChanged = { color ->
                         uiState = uiState.copy(colorP = color.toHexCodeWithAlpha())
                     },
+                    selectNoneButtonText = stringResource(R.string.remove_color),
                     onSelectDefaultColor = {
-                        uiState = uiState.copy(color = phase.colorP)
+                        uiState = uiState.copy(colorP = null)
                     },
                 )
                 SettingsCheckbox(
@@ -146,11 +149,27 @@ fun PhaseEditDialog(
                     },
                 )
 
+                SettingsCheckbox(
+                    value = uiState.notificateStart,
+                    label = stringResource(R.string.notification_on_start),
+                    onChange = {
+                        uiState = uiState.copy(notificateStart = it)
+                    },
+                )
+
+                SettingsCheckbox(
+                    value = uiState.notificateEveryDay,
+                    label = stringResource(R.string.notification_every_day),
+                    onChange = {
+                        uiState = uiState.copy(notificateEveryDay = it)
+                    },
+                )
+
                 Row(
                     horizontalArrangement = Arrangement.SpaceBetween,
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(top = paddingBig)
+                        .padding(top = paddingMedium)
                 ) {
                     OutlinedButton(
                         onClick = {
@@ -188,7 +207,9 @@ private fun PhaseEditDialogPreview() {
                 desc = "Test",
                 color = "#00ff00",
                 colorP = "#00fc00",
-                markwholephase = true
+                markwholephase = true,
+                notificateStart = true,
+                notificateEveryDay = false
             )
         )
     }

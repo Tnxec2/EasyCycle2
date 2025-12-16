@@ -32,7 +32,7 @@ class NotificationReceiver : BroadcastReceiver() {
 
         // Benachrichtigung erstellen
         val notification = NotificationCompat.Builder(context, CHANNEL_ID)
-            .setSmallIcon(R.drawable.ic_launcher_foreground) // Ersetzen Sie dies mit Ihrem App-Icon
+            .setSmallIcon(R.mipmap.ic_launcher) // Ersetzen Sie dies mit Ihrem App-Icon
             .setContentTitle(context.getString(R.string.phase_starts_today_title)) // z.B. "Phase beginnt heute"
             .setContentText(phaseName)
             .setPriority(NotificationCompat.PRIORITY_DEFAULT)

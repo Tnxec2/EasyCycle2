@@ -17,6 +17,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -187,14 +188,24 @@ fun ColorPicker(
 
                         }
                     })
-                AlphaTile(
+
+                Column(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(40.dp)
                         .padding(top = paddingSmall)
-                        .clip(RoundedCornerShape(6.dp)),
-                    controller = controller
-                )
+                ){
+                    Text(
+                        text = stringResource(com.kontranik.easycycle.R.string.selected_color),
+                    )
+                    AlphaTile(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(40.dp)
+                            .clip(RoundedCornerShape(6.dp)),
+                        controller = controller
+                    )
+                }
+
                 Row(
                     horizontalArrangement = Arrangement.SpaceBetween,
                     modifier = Modifier

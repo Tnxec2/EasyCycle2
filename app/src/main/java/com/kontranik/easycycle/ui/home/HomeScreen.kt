@@ -62,7 +62,6 @@ import kotlinx.coroutines.launch
 import java.util.Date
 
 
-@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun HomeScreen(
     navigateSettings: () -> Unit,

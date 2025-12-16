@@ -22,6 +22,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combineTransform
+import kotlinx.coroutines.flow.last
 import kotlinx.coroutines.flow.transform
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
@@ -99,6 +100,12 @@ class CalendarViewModel(
     init {
         viewModelScope.launch(Dispatchers.IO) {
             cycleRepository.clearOldStatistic()
+
+
+            val alarmScheduler = AlarmScheduler(app.applicationContext)
+            val allPhases = PhasesHelper.getPhases(app)
+            alarmScheduler.logAllScheduledAlarms(allPhases)
+
         }
     }
 
@@ -295,6 +302,8 @@ class CalendarViewModel(
 
         alarmScheduler.schedulePhaseNotifications(time, allPhases)
     }
+
+
 
     companion object {
 

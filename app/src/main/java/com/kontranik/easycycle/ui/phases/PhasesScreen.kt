@@ -22,6 +22,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
@@ -35,6 +36,7 @@ import com.kontranik.easycycle.constants.DefaultPhasesData.Companion.ar
 import com.kontranik.easycycle.model.Phase
 import com.kontranik.easycycle.ui.appbar.AppBar
 import com.kontranik.easycycle.ui.appbar.AppBarAction
+import com.kontranik.easycycle.ui.calendar.CalendarViewModel
 import com.kontranik.easycycle.ui.shared.ConfirmDialog
 import com.kontranik.easycycle.ui.shared.ConfirmDialogData
 import com.kontranik.easycycle.ui.theme.EasyCycleTheme
@@ -81,7 +83,7 @@ fun PhasesContent(
 ) {
     var expandedMenu by rememberSaveable { mutableStateOf(false) }
     var showWipeDialog by rememberSaveable { mutableStateOf(false) }
-    var editPhase by rememberSaveable { mutableStateOf<Phase?>(null) }
+    var editPhase by remember { mutableStateOf<Phase?>(null) }
 
     Scaffold(
         topBar = {

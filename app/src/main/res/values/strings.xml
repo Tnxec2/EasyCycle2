@@ -78,7 +78,7 @@ Click OK to select the CSV file.
     <string name="from">From</string>
     <string name="to">To</string>
     <string name="description">Description</string>
-    <string name="remove_color">remove color</string>
+    <string name="remove_color">Remove color</string>
     <string name="edit_average_cycle_length">Edit average cycle length</string>
     <string name="show_on_start">Show on start</string>
     <string name="different_color_for_prediction">different color for prediction</string>
@@ -93,4 +93,9 @@ Click OK to select the CSV file.
     <string name="add_cycle">start new cycle</string>
     <string name="back">go back</string>
     <string name="phase_starts_today_title">Phase start today</string>
+    <string name="title_notification_alert_permission">Notification permission</string>
+    <string name="message_notification_alert_permission">If you would like the app to inform you about the start of each phase, grant permission for alarms and notifications in the next steps.</string>
+    <string name="notification_on_start">Notification on start</string>
+    <string name="notification_every_day">Notification every day</string>
+    <string name="selected_color">Selected color</string>
 </resources>
