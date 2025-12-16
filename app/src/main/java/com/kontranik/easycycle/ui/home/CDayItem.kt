@@ -81,7 +81,7 @@ fun CDayItem(
                 cday.phases.forEach { phase ->
                     Text(
                         text = phase.desc,
-                        style = MaterialTheme.typography.labelSmall,
+                        style = MaterialTheme.typography.bodyMedium,
                         modifier = Modifier.padding(bottom = paddingSmall)
                     )
                 }
