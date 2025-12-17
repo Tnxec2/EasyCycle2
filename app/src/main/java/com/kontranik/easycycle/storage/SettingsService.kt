@@ -35,8 +35,16 @@ class SettingsService {
 
             val sharedPreferences: SharedPreferences =
                 context.getSharedPreferences(PREFERENCES_FILE_NAME, 0)
-            val settings = sharedPreferences.getString(APP_SETTINGS, null)
-            settingsInstance = gson.fromJson(settings, Settings::class.java)
+            val json = sharedPreferences.getString(APP_SETTINGS, null)
+            settingsInstance = gson.fromJson(json, Settings::class.java)
+            settingsInstance?.let { sI ->
+                if (sI.notificationMinute == null || sI.notificationHour == null) {
+                    settingsInstance = settingsInstance?.copy(
+                        notificationHour = 9,
+                        notificationMinute = 0
+                    )
+                }
+            }
             return settingsInstance ?: Settings()
         }
 

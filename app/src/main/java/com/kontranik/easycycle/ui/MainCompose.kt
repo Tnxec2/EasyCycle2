@@ -1,10 +1,8 @@
 package com.kontranik.easycycle.ui
 
 import android.app.Activity
-import android.os.Build
 import android.util.Log
 import androidx.activity.compose.BackHandler
-import androidx.annotation.RequiresApi
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ListAlt
 import androidx.compose.material.icons.filled.CalendarMonth
@@ -13,11 +11,7 @@ import androidx.compose.material.icons.filled.StackedBarChart
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.compositionLocalOf
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
@@ -25,7 +19,6 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
 import com.kontranik.easycycle.AppViewModelProvider
 import com.kontranik.easycycle.R
-import com.kontranik.easycycle.model.Settings
 import com.kontranik.easycycle.model.navigation_calendar
 import com.kontranik.easycycle.model.navigation_info
 import com.kontranik.easycycle.model.navigation_phases
@@ -40,7 +33,6 @@ data class DarkTheme(val isDark: Boolean = false)
 
 val LocalTheme = compositionLocalOf { DarkTheme() }
 
-@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun MainCompose(
     start: Screen = Screen.Home,

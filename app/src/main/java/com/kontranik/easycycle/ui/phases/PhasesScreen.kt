@@ -121,7 +121,7 @@ fun PhasesContent(
                                 )
                             },
                             onClick = {
-                                onWipePhases();
+                                showWipeDialog = true
                                 expandedMenu = false
                             }
                         )

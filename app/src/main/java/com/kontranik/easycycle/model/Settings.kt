@@ -12,9 +12,13 @@ const val navigation_phases = 3
 data class Settings(
     var showOnStart: Int = navigation_info,
     var daysOnHome: Int = 5,
-    var yearsOnStatistic: Int = 3
+    var yearsOnStatistic: Int = 3,
+    val notificationHour: Int = 7,
+    val notificationMinute: Int = 0,
 ): Parcelable {
     constructor(parcel: Parcel) : this(
+        parcel.readInt(),
+        parcel.readInt(),
         parcel.readInt(),
         parcel.readInt(),
         parcel.readInt()
@@ -25,6 +29,8 @@ data class Settings(
         parcel.writeInt(showOnStart)
         parcel.writeInt(daysOnHome)
         parcel.writeInt(yearsOnStatistic)
+        parcel.writeInt(notificationHour)
+        parcel.writeInt(notificationMinute)
     }
 
     override fun describeContents(): Int {
@@ -45,14 +51,18 @@ data class Settings(
 data class SettingsUiState (
     var showOnStart: Int,
     var daysOnHome: String,
-    var yearsOnStatistic: String
+    var yearsOnStatistic: String,
+    val notificationHour: Int,
+    val notificationMinute: Int
 )
 
 fun Settings.toUiState() : SettingsUiState {
     return SettingsUiState(
         showOnStart = this.showOnStart,
         daysOnHome = this.daysOnHome.toString(),
-        yearsOnStatistic = this.yearsOnStatistic.toString()
+        yearsOnStatistic = this.yearsOnStatistic.toString(),
+        notificationHour = this.notificationHour,
+        notificationMinute = this.notificationMinute
     )
 }
 
@@ -60,6 +70,8 @@ fun SettingsUiState.toSettings(): Settings {
     return Settings(
         showOnStart = this.showOnStart,
         daysOnHome = this.daysOnHome.toInt(),
-        yearsOnStatistic = this.yearsOnStatistic.toInt()
+        yearsOnStatistic = this.yearsOnStatistic.toInt(),
+        notificationHour = this.notificationHour,
+        notificationMinute = this.notificationMinute,
     )
 }

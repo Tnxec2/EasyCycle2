@@ -98,4 +98,6 @@ Click OK to select the CSV file.
     <string name="notification_on_start">Notification on start</string>
     <string name="notification_every_day">Notification every day</string>
     <string name="selected_color">Selected color</string>
+    <string name="notification">Notification</string>
+    <string name="select_time">Select time</string>
 </resources>

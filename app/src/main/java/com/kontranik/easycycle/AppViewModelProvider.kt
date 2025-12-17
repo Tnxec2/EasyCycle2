@@ -17,12 +17,12 @@ import com.kontranik.easycycle.ui.statistic.StatisticViewModel
  * Provides Factory to create instance of ViewModel for the entire Inventory app
  */
 object AppViewModelProvider {
-    @RequiresApi(Build.VERSION_CODES.O)
     val Factory = viewModelFactory {
 
         initializer {
             SettingsViewModel(
                 application().applicationContext,
+                application().container.cycleRepository
             )
         }
 

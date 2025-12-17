@@ -7,6 +7,7 @@ import android.content.Intent
 import android.os.Build
 import android.util.Log
 import com.kontranik.easycycle.model.Phase
+import com.kontranik.easycycle.storage.SettingsService
 import java.util.Calendar
 import java.util.Date
 
@@ -30,9 +31,11 @@ class AlarmScheduler(private val context: Context) {
 
         Log.d("AlarmScheduler", "Scheduling phase notifications for new cycle starting on $newCycleStartDate, phases: ${phases.size}")
 
+        val settings = SettingsService.loadSettings(context)
+
         phases.filter{ it.notificateStart || it.notificateEveryDay }.distinctBy { it.key }.forEach { phase ->
             val notificationId: Int = phase.key.toInt()
-            val calendar = getCalendarFromPhase(newCycleStartDate, phase)
+            val calendar = getCalendarFromPhase(newCycleStartDate, phase, settings.notificationHour, settings.notificationMinute)
 
             var days = phase.to?.let{ to -> if ( phase.notificateEveryDay && to > phase.from ) {
                 to - phase.from
@@ -50,8 +53,11 @@ class AlarmScheduler(private val context: Context) {
 
     private fun getCalendarFromPhase(
         newCycleStartDate: Date,
-        phase: Phase
+        phase: Phase,
+        notificationHour: Int,
+        notificationMinute: Int,
     ): Calendar {
+
         val calendar = Calendar.getInstance().apply {
             // Temporär: Alarm in 5 Sekunden auslösen
             // add(Calendar.SECOND, 5)
@@ -60,8 +66,8 @@ class AlarmScheduler(private val context: Context) {
             // Tag des Phasenbeginns hinzufügen
             add(Calendar.DAY_OF_YEAR, phase.from - 1)
             // Alarm z.B. um 9 Uhr morgens auslösen
-            set(Calendar.HOUR_OF_DAY, 9)
-            set(Calendar.MINUTE, 0)
+            set(Calendar.HOUR_OF_DAY, notificationHour)
+            set(Calendar.MINUTE, notificationMinute)
             set(Calendar.SECOND, 0)
         }
         return calendar
@@ -89,7 +95,7 @@ class AlarmScheduler(private val context: Context) {
                 PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
             )
 
-            Log.d("AlarmScheduler", "Scheduled phase notification for $desc at ${calendar.time}")
+            Log.d("AlarmScheduler", "Scheduled phase notification at ${calendar.time} for $desc")
             // Alarm planen
             alarmManager.setExact(
                 AlarmManager.RTC_WAKEUP,

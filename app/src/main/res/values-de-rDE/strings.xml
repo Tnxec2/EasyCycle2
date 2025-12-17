@@ -97,4 +97,6 @@ Sie können ihre alte Statistik aus einer CSV-Datei importieren. Dafür tippen S
     <string name="notification_on_start">Benachrichtigung am Start</string>
     <string name="notification_every_day">Benachrichtigung jeden Tag</string>
     <string name="selected_color">Ausgewählte Farbe</string>
+    <string name="notification">Benachrichtigung</string>
+    <string name="select_time">Zeitauswahl</string>
 </resources>
