@@ -2,6 +2,7 @@ package com.kontranik.easycycle.storage
 
 import android.content.Context
 import android.content.SharedPreferences
+import android.util.Log
 import com.google.gson.Gson
 import com.kontranik.easycycle.constants.DefaultPhasesData
 import com.kontranik.easycycle.model.Phase
@@ -85,14 +86,20 @@ class SettingsService {
                 context.getSharedPreferences(PREFERENCES_FILE_NAME, 0)
             val phasesSet = sharedPreferences.getStringSet(CUSTOM_PHASES, null)
 
-            phasesInstance = phasesSet?.mapNotNull { json ->
-                val p = gson.fromJson(json, Phase::class.java)
-                if (p.notificateStart == null) {
-                    p.notificateStart = true
-                }
-                return@mapNotNull p
-            }?.sortedBy { it.from }
-                ?: DefaultPhasesData.ar.sortedBy { it.from }
+            try {
+                phasesInstance = phasesSet?.mapNotNull { json ->
+                    val p = gson.fromJson(json, Phase::class.java)
+                    if (p.notificateStart == null) {
+                        p.notificateStart = true
+                    }
+                    return@mapNotNull p
+                }?.sortedBy { it.from }
+                    ?: DefaultPhasesData.ar.sortedBy { it.from }
+            } catch (e: Exception) {
+                Log.e("SettingsService", "Error loading custom phases: ${e.message}")
+                e.printStackTrace()
+                phasesInstance = DefaultPhasesData.ar.sortedBy { it.from }
+            }
             return phasesInstance
         }
 
