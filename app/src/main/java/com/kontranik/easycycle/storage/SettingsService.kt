@@ -2,14 +2,11 @@ package com.kontranik.easycycle.storage
 
 import android.content.Context
 import android.content.SharedPreferences
-import android.util.Log
 import com.google.gson.Gson
 import com.kontranik.easycycle.constants.DefaultPhasesData
 import com.kontranik.easycycle.model.Phase
 import com.kontranik.easycycle.model.Settings
 import androidx.core.content.edit
-import com.google.gson.GsonBuilder
-import com.kontranik.easycycle.model.PhaseAdapter
 
 
 class SettingsService {
@@ -38,7 +35,7 @@ class SettingsService {
             val json = sharedPreferences.getString(APP_SETTINGS, null)
             settingsInstance = gson.fromJson(json, Settings::class.java)
             settingsInstance?.let { sI ->
-                if (sI.notificationMinute == null || sI.notificationHour == null) {
+                if (sI.notificationHour == null || sI.notificationMinute == null) {
                     settingsInstance = settingsInstance?.copy(
                         notificationHour = 9,
                         notificationMinute = 0
@@ -88,11 +85,11 @@ class SettingsService {
                 context.getSharedPreferences(PREFERENCES_FILE_NAME, 0)
             val phasesSet = sharedPreferences.getStringSet(CUSTOM_PHASES, null)
 
-            val gsonAdapter = GsonBuilder()
-                .registerTypeAdapter(Phase::class.java, PhaseAdapter())
-                .create()
             phasesInstance = phasesSet?.mapNotNull { json ->
-                val p = gsonAdapter.fromJson(json, Phase::class.java)
+                val p = gson.fromJson(json, Phase::class.java)
+                if (p.notificateStart == null) {
+                    p.notificateStart = true
+                }
                 return@mapNotNull p
             }?.sortedBy { it.from }
                 ?: DefaultPhasesData.ar.sortedBy { it.from }

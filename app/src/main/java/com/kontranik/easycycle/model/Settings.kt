@@ -13,8 +13,8 @@ data class Settings(
     var showOnStart: Int = navigation_info,
     var daysOnHome: Int = 5,
     var yearsOnStatistic: Int = 3,
-    val notificationHour: Int = 7,
-    val notificationMinute: Int = 0,
+    val notificationHour: Int? = 7,
+    val notificationMinute: Int? = 0,
 ): Parcelable {
     constructor(parcel: Parcel) : this(
         parcel.readInt(),
@@ -29,8 +29,8 @@ data class Settings(
         parcel.writeInt(showOnStart)
         parcel.writeInt(daysOnHome)
         parcel.writeInt(yearsOnStatistic)
-        parcel.writeInt(notificationHour)
-        parcel.writeInt(notificationMinute)
+        notificationHour?.let { parcel.writeInt(it) }
+        notificationMinute?.let { parcel.writeInt(it) }
     }
 
     override fun describeContents(): Int {
@@ -61,8 +61,8 @@ fun Settings.toUiState() : SettingsUiState {
         showOnStart = this.showOnStart,
         daysOnHome = this.daysOnHome.toString(),
         yearsOnStatistic = this.yearsOnStatistic.toString(),
-        notificationHour = this.notificationHour,
-        notificationMinute = this.notificationMinute
+        notificationHour = this.notificationHour ?: 7,
+        notificationMinute = this.notificationMinute ?: 0
     )
 }
 

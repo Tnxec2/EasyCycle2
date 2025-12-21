@@ -6,8 +6,8 @@ import com.kontranik.easycycle.model.Settings
 class DefaultSettings {
     companion object {
 
-        const val monthsForAverageCycleLength = 12
-        const val yearsToLeave = 10
+        const val monthsForAverageCycleLength: Int = 12
+        const val yearsToLeave: Int = 10
         const val defaultCycleLength: Int = 28
 
     }

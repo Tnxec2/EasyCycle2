@@ -33,9 +33,9 @@ class AlarmScheduler(private val context: Context) {
 
         val settings = SettingsService.loadSettings(context)
 
-        phases.filter{ it.notificateStart || it.notificateEveryDay }.distinctBy { it.key }.forEach { phase ->
+        phases.filter{ it.notificateStart == true || it.notificateEveryDay }.distinctBy { it.key }.forEach { phase ->
             val notificationId: Int = phase.key.toInt()
-            val calendar = getCalendarFromPhase(newCycleStartDate, phase, settings.notificationHour, settings.notificationMinute)
+            val calendar = getCalendarFromPhase(newCycleStartDate, phase, settings.notificationHour ?: 7, settings.notificationMinute ?: 0)
 
             var days = phase.to?.let{ to -> if ( phase.notificateEveryDay && to > phase.from ) {
                 to - phase.from
@@ -131,7 +131,7 @@ class AlarmScheduler(private val context: Context) {
         Log.d("AlarmScheduler", "--- Checking for all scheduled alarms ---")
         var alarmCount = 0
 
-        val allPossiblePhases = phases.filter { it.notificateStart || it.notificateEveryDay }.distinctBy { it.key }
+        val allPossiblePhases = phases.filter { it.notificateStart == true || it.notificateEveryDay }.distinctBy { it.key }
 
         allPossiblePhases.forEach { phase ->
             val notificationId: Int = phase.key.toInt()

@@ -183,7 +183,7 @@ fun PhaseItem(
                     }
                 }
 
-                if (phase.notificateStart) {
+                if ( phase.notificateStart == true) {
                     Row(
                         verticalAlignment = Alignment.CenterVertically
                     ) {
