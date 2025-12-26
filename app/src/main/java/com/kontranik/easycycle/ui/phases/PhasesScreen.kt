@@ -34,6 +34,7 @@ import com.kontranik.easycycle.AppViewModelProvider
 import com.kontranik.easycycle.R
 import com.kontranik.easycycle.constants.DefaultPhasesData.Companion.ar
 import com.kontranik.easycycle.model.Phase
+import com.kontranik.easycycle.model.PhaseUi
 import com.kontranik.easycycle.ui.appbar.AppBar
 import com.kontranik.easycycle.ui.appbar.AppBarAction
 import com.kontranik.easycycle.ui.calendar.CalendarViewModel
@@ -79,7 +80,7 @@ fun PhasesContent(
     phases: List<Phase>,
     onWipePhases: () -> Unit = {},
     onSavePhase: (Phase) -> Unit = {},
-    onRemovePhase: (key: Long) -> Unit = {},
+    onRemovePhase: (index: Int) -> Unit = {},
 ) {
     var expandedMenu by rememberSaveable { mutableStateOf(false) }
     var showWipeDialog by rememberSaveable { mutableStateOf(false) }
@@ -93,11 +94,7 @@ fun PhasesContent(
                     AppBarAction(appBarAction =  AppBarAction(
                         vector = Icons.Default.Add,
                         description = R.string.add_new_phase,
-                        onClick = { editPhase = Phase(
-                            key = Date().time,
-                            from = 1,
-                            desc = "",
-                        ) }
+                        onClick = { editPhase = Phase() }
                     ))
                     AppBarAction(
                         appBarAction = AppBarAction(
@@ -146,7 +143,7 @@ fun PhasesContent(
                                 editPhase = phase
                             },
                             onDelete = {
-                                onRemovePhase(phase.key)
+                                onRemovePhase(index)
                             }
                         )
                         if (index != phases.size) Box( Modifier.height(paddingSmall))

@@ -198,21 +198,6 @@ fun PhaseItem(
                         )
                     }
                 }
-                if (phase.notificateEveryDay) {
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.Notifications,
-                            contentDescription = null,
-                            Modifier.size(24.dp).padding(end = paddingSmall)
-                        )
-                        Text(
-                            text = "Notification every day",
-                            style = MaterialTheme.typography.bodyMedium
-                        )
-                    }
-                }
             }
         }
 
@@ -242,7 +227,7 @@ private fun CDayItemPreview() {
                 Modifier.padding(paddingMedium)
             ) {
                 PhaseItem(
-                    phase = ar[0].copy(notificateEveryDay = true)
+                    phase = ar[0]
                 )
             }
         }

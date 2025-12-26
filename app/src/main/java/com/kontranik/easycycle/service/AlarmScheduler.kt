@@ -33,21 +33,17 @@ class AlarmScheduler(private val context: Context) {
 
         val settings = SettingsService.loadSettings(context)
 
-        phases.filter{ it.notificateStart == true || it.notificateEveryDay }.distinctBy { it.key }.forEach { phase ->
-            val notificationId: Int = phase.key.toInt()
-            val calendar = getCalendarFromPhase(newCycleStartDate, phase, settings.notificationHour ?: 7, settings.notificationMinute ?: 0)
-
-            var days = phase.to?.let{ to -> if ( phase.notificateEveryDay && to > phase.from ) {
-                to - phase.from
-            } else {
-                1
-            } } ?: 1
-
-            while (days > 0) {
-                setNotification(calendar, phase, notificationId)
-                calendar.add(Calendar.DAY_OF_YEAR, 1)
-                days -= 1
-            }
+        phases.filter { it.key != null }
+            .filter{ it.notificateStart == true }
+            .distinctBy { it.key }
+            .forEach { phase ->
+            val notificationId: Int = phase.key!!
+            val calendar = getCalendarFromPhase(
+                newCycleStartDate,
+                phase,
+                settings.notificationHour ?: 7,
+                settings.notificationMinute ?: 0)
+            setNotification(calendar, phase, notificationId)
         }
     }
 
@@ -83,19 +79,30 @@ class AlarmScheduler(private val context: Context) {
         if (calendar.timeInMillis > System.currentTimeMillis()) {
             val desc = if (phase.to != null) "${phase.from} - ${phase.to}. ${phase.desc}"
             else "${phase.from}. ${phase.desc}"
-            val intent = Intent(context, NotificationReceiver::class.java).apply {
-                putExtra(NotificationReceiver.EXTRA_PHASE_NAME, desc)
-                putExtra(NotificationReceiver.EXTRA_NOTIFICATION_ID, notificationId)
+
+            val alarmIntent = Intent(context, NotificationReceiver::class.java)
+                .apply {
+                    putExtra(NotificationReceiver.EXTRA_PHASE_NAME, desc)
+                    putExtra(NotificationReceiver.EXTRA_NOTIFICATION_ID, notificationId)
+                }
+
+            val pendingIntent = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) { // Android 12+
+                PendingIntent.getBroadcast(
+                    context,
+                    notificationId,
+                    alarmIntent,
+                    PendingIntent.FLAG_CANCEL_CURRENT or PendingIntent.FLAG_MUTABLE, // Mutable for Android 12+
+                )
+            } else { // Below Android 12
+                PendingIntent.getBroadcast(
+                    context,
+                    notificationId,
+                    alarmIntent,
+                    PendingIntent.FLAG_CANCEL_CURRENT or PendingIntent.FLAG_IMMUTABLE, // No FLAG_MUTABLE needed for older versions
+                )
             }
 
-            val pendingIntent = PendingIntent.getBroadcast(
-                context,
-                notificationId,
-                intent,
-                PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
-            )
-
-            Log.d("AlarmScheduler", "Scheduled phase notification at ${calendar.time} for $desc")
+            Log.d("", "Scheduled phase notification with id $notificationId at ${calendar.time} for $desc")
             // Alarm planen
             alarmManager.setExact(
                 AlarmManager.RTC_WAKEUP,
@@ -107,8 +114,8 @@ class AlarmScheduler(private val context: Context) {
 
     // Nützlich, um alte Alarme zu entfernen, wenn ein neuer Zyklus beginnt
     fun cancelAllPhaseNotifications(phases: List<Phase>) {
-        phases.forEach { phase ->
-            val notificationId: Int = phase.key.toInt()
+        phases.filter { it.key != null }.forEach { phase ->
+            val notificationId: Int = phase.key!!
             val intent = Intent(context, NotificationReceiver::class.java)
             val pendingIntent = PendingIntent.getBroadcast(
                 context,
@@ -128,13 +135,13 @@ class AlarmScheduler(private val context: Context) {
      * @param phases Die Liste aller möglichen Phasen, für die Alarme existieren könnten.
      */
     fun logAllScheduledAlarms(phases: List<Phase>) {
-        Log.d("AlarmScheduler", "--- Checking for all scheduled alarms ---")
+        Log.i("AlarmScheduler", "--- Checking for all scheduled alarms ---")
         var alarmCount = 0
 
-        val allPossiblePhases = phases.filter { it.notificateStart == true || it.notificateEveryDay }.distinctBy { it.key }
+        val allPossiblePhases = phases.filter { it.notificateStart == true }.distinctBy { it.key }
 
-        allPossiblePhases.forEach { phase ->
-            val notificationId: Int = phase.key.toInt()
+        allPossiblePhases.filter { it.key != null }.forEach { phase ->
+            val notificationId: Int = phase.key!!
             val intent = Intent(context, NotificationReceiver::class.java)
 
             // Wir versuchen, den PendingIntent abzurufen, ohne ihn neu zu erstellen
@@ -153,9 +160,9 @@ class AlarmScheduler(private val context: Context) {
         }
 
         if (alarmCount == 0) {
-            Log.d("AlarmScheduler", "No active alarms found for this app.")
+            Log.i("AlarmScheduler", "--- No active alarms found for this app. ---")
         } else {
-            Log.d("AlarmScheduler", "--- Found a total of $alarmCount active alarms. ---")
+            Log.i("AlarmScheduler", "--- Found a total of $alarmCount active alarms. ---")
         }
     }
 

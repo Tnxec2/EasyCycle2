@@ -46,17 +46,19 @@ class SettingsService {
             return settingsInstance ?: Settings()
         }
 
-        fun saveCustomPhase(context: Context, phase: Phase): List<Phase> {
-            saveCustomPhases(context, loadCustomPhases(context)
-                .filter { it.key != phase.key }
-                .plus(phase)
-                .sortedBy { it.from })
+        fun saveCustomPhase(context: Context, newPhase: Phase): List<Phase> {
+            saveCustomPhases(
+                context,
+                loadCustomPhases(context)
+                    .filter { newPhase.key == null || it.key != newPhase.key }
+                    .plus(newPhase)
+                    .sortedBy { it.from })
             return phasesInstance
         }
 
-        fun removeCustomPhase(context: Context, key: Long): List<Phase> {
-            val phases = loadCustomPhases(context).filter {
-                it.key != key
+        fun removeCustomPhase(context: Context, indexToRemove: Int): List<Phase> {
+            val phases = loadCustomPhases(context).filterIndexed { index, phase ->
+                index != indexToRemove
             }
             saveCustomPhases(context, phases)
             return phasesInstance
@@ -66,14 +68,21 @@ class SettingsService {
             val sharedPreferences: SharedPreferences =
                 context.getSharedPreferences(PREFERENCES_FILE_NAME, 0)
             sharedPreferences.edit {
-                val resultSet = mutableSetOf<String>()
-                phases.forEach {
-                    val serializedObject = gson.toJson(it)
+                val jsonPhases = mutableSetOf<String>()
+
+                var maxKey = phases.maxOfOrNull { it.key ?: 0 } ?: 0
+
+                phases.forEach { phase ->
+                    if (phase.key == null) {
+                        phase.key = maxKey
+                        maxKey += 1
+                    }
+                    val serializedObject = gson.toJson(phase)
                     if (serializedObject != null) {
-                        resultSet.add(serializedObject)
+                        jsonPhases.add(serializedObject)
                     }
                 }
-                putStringSet(CUSTOM_PHASES, resultSet)
+                putStringSet(CUSTOM_PHASES, jsonPhases)
                 apply()
             }
             phasesInstance = phases.sortedBy { it.from }
@@ -92,9 +101,11 @@ class SettingsService {
                     if (p.notificateStart == null) {
                         p.notificateStart = true
                     }
+                    Log.d("SettingsService", "custom phase: key: ${p.key}, from: ${p.from}, to: ${p.to}, desc: ${p.desc.substring(0, 20)}...")
                     return@mapNotNull p
                 }?.sortedBy { it.from }
                     ?: DefaultPhasesData.ar.sortedBy { it.from }
+
             } catch (e: Exception) {
                 Log.e("SettingsService", "Error loading custom phases: ${e.message}")
                 e.printStackTrace()

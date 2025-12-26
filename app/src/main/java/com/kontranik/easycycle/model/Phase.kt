@@ -3,19 +3,18 @@ package com.kontranik.easycycle.model
 import java.io.Serializable
 
 data class Phase  (
-    var key: Long,
-    var from: Int,
+    var key: Int? = null,
+    var from: Int = 1,
     var to: Int? = null,
-    var desc: String,
+    var desc: String = "",
     var color: String? = null,  // color of current cycle
     var colorP: String? = null, // color of followed cycles (future)
     var markwholephase: Boolean = false, // has effect only in tabcalendar
     var notificateStart: Boolean? = true,
-    var notificateEveryDay: Boolean = false,
 ) : Serializable {}
 
 data class PhaseUi  (
-    var key: Long,
+    var key: Int?,
     var from: String,
     var to: String,
     var desc: String,
@@ -23,7 +22,6 @@ data class PhaseUi  (
     var colorP: String? = null, // color of followed cycles (future)
     var markwholephase: Boolean = false, // has effect only in tabcalendar
     var notificateStart: Boolean = true,
-    var notificateEveryDay: Boolean = false,
 )
 
 fun Phase.toUi(): PhaseUi  {
@@ -36,7 +34,6 @@ fun Phase.toUi(): PhaseUi  {
         colorP = colorP,
         markwholephase = markwholephase,
         notificateStart = notificateStart ?: true,
-        notificateEveryDay = notificateEveryDay
     )
 }
 
@@ -50,6 +47,5 @@ fun PhaseUi.toPhase(): Phase  {
         colorP = colorP,
         markwholephase = markwholephase,
         notificateStart = notificateStart,
-        notificateEveryDay = notificateEveryDay
     )
 }

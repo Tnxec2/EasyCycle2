@@ -157,14 +157,6 @@ fun PhaseEditDialog(
                     },
                 )
 
-                SettingsCheckbox(
-                    value = uiState.notificateEveryDay,
-                    label = stringResource(R.string.notification_every_day),
-                    onChange = {
-                        uiState = uiState.copy(notificateEveryDay = it)
-                    },
-                )
-
                 Row(
                     horizontalArrangement = Arrangement.SpaceBetween,
                     modifier = Modifier
@@ -209,7 +201,6 @@ private fun PhaseEditDialogPreview() {
                 colorP = "#00fc00",
                 markwholephase = true,
                 notificateStart = true,
-                notificateEveryDay = false
             )
         )
     }

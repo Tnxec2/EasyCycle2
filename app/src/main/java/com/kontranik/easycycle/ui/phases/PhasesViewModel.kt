@@ -30,9 +30,9 @@ class PhasesViewModel(
         }
     }
 
-    fun onRemovePhase(key: Long) {
+    fun onRemovePhase(index: Int) {
         viewModelScope.launch {
-            SettingsService.removeCustomPhase(context, key).let {
+            SettingsService.removeCustomPhase(context, index).let {
                 val oldPhases = _phases.value.map { phase -> phase.copy() }
                 _phases.emit(it.map { phase -> phase.copy() })
                 updateScheduler(oldPhases, it)
